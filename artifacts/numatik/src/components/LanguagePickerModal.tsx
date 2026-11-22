@@ -310,13 +310,21 @@ const LanguagePickerModal = ({ open, onClose }: Props) => {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.28 }}
-          className="fixed inset-0 z-[90] flex flex-col"
+          className="language-picker-root fixed inset-0 z-[90] flex flex-col"
         >
           {/* ── Top decorative area ── */}
           <div
-            className="relative flex-1 min-h-0 overflow-hidden"
+            className="language-picker-preview relative flex-1 min-h-0 overflow-hidden"
             style={{ background: s.topBg }}
           >
+            <div className="language-math-decor" aria-hidden="true">
+              <span className="language-math-symbol lang-pi">πr²</span>
+              <span className="language-math-symbol lang-sigma">Σ</span>
+              <span className="language-math-symbol lang-fraction"><i>1</i><b>2</b></span>
+              <span className="language-math-symbol lang-cube">x³</span>
+              <span className="language-math-orbit orbit-one" />
+              <span className="language-math-orbit orbit-two" />
+            </div>
             {/* Star/dot pattern */}
             <div
               className="absolute inset-0 pointer-events-none"
@@ -399,16 +407,24 @@ const LanguagePickerModal = ({ open, onClose }: Props) => {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 80, opacity: 0 }}
             transition={{ type: "spring", stiffness: 300, damping: 28, delay: 0.1 }}
-            className={`relative z-20 border-t shadow-2xl ${s.panelBg} ${s.panelBorder}`}
+            className={`language-picker-panel relative z-20 border-t shadow-2xl ${s.panelBg} ${s.panelBorder}`}
           >
             {/* Drag handle */}
-            <div className="flex justify-center pt-2.5 pb-1">
+            <div className="language-picker-drag-handle flex justify-center pt-2.5 pb-1">
               <div className={`w-9 h-1 rounded-full ${s.dragHandle}`} />
             </div>
 
-            <div className="px-5 pt-1 pb-5">
+            <div className="language-picker-math relative px-5 pt-1 pb-5 overflow-hidden">
+              <div className="language-picker-math-pattern" aria-hidden="true">
+                <span>1+1=2</span><span>A²+B²=C²</span><span>∠90°</span>
+              </div>
+              <div className="picker-progress picker-progress-language" aria-label="Language 2 of 2">
+                <div className="picker-progress-step"><span>01</span><b>{t("selectTheme")}</b></div>
+                <div className="picker-progress-line is-complete" />
+                <div className="picker-progress-step is-active"><span>02</span><b>{t("selectLanguage")}</b></div>
+              </div>
               {/* Header */}
-              <div className="flex items-center gap-2 mb-4">
+              <div className="language-picker-heading flex items-center gap-2 mb-4">
                 <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shrink-0">
                   <span className="text-sm">🌐</span>
                 </div>
@@ -423,7 +439,7 @@ const LanguagePickerModal = ({ open, onClose }: Props) => {
               </div>
 
               {/* Language cards */}
-              <div className="flex flex-col gap-2 mb-4">
+              <div className="language-button-grid mb-4">
                 {LANGUAGES.map((lang) => {
                   const isActive = selected === lang.id;
                   return (
@@ -431,13 +447,13 @@ const LanguagePickerModal = ({ open, onClose }: Props) => {
                       key={lang.id}
                       whileTap={{ scale: 0.98 }}
                       onClick={() => handleSelect(lang.id)}
-                      className={`relative flex items-center gap-4 rounded-2xl px-4 py-3 border-2 transition-all duration-200 cursor-pointer text-left ${
+                      className={`future-language-option relative flex items-center gap-3 rounded-2xl px-3 py-3 border-2 transition-all duration-200 cursor-pointer text-left ${
                         isActive
                           ? `border-transparent ring-2 ${lang.ring} bg-white/10`
                           : s.cardInactive
                       }`}
                     >
-                      <span className="text-3xl leading-none">{lang.flag}</span>
+                      <span className="future-language-flag text-3xl leading-none">{lang.flag}</span>
                       <div className="flex-1 min-w-0">
                         <p className={`font-display font-black text-sm leading-tight ${s.cardText}`}>
                           {lang.native}
