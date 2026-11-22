@@ -31,10 +31,10 @@ Pemeriksaan membaca objek locale statis; spread atau key komputasi yang menghala
 
 ### Rekonsiliasi sebelum dan sesudah perbaikan parser
 
-| Tahap | Mismatch numeric | Hilang setelah diagnosis | Baru terungkap |
+| Perbandingan | Mismatch numeric | Hilang | Baru terungkap |
 | --- | ---: | ---: | ---: |
-| Sebelum penyesuaian parser | 650 | — | — |
-| Sesudah penyesuaian parser | 635 | 22 | 7 |
+| Ekstraktor digit lama → parser saat ini | 2539 → 635 | 2048 | 144 |
+| Pembanding sebelum diagnosis → sesudah diagnosis | 650 → 635 | 22 | 7 |
 
 ### Jumlah ketidaksesuaian per jenis (seluruh file)
 
@@ -46,11 +46,15 @@ Pemeriksaan membaca objek locale statis; spread atau key komputasi yang menghala
 | label | 3 | Tidak |
 | nilai-beda | 405 | Ya |
 | ambigu-pemisah | 59 | Ya |
-| **Jumlah kelas numeric sebelum pengecualian format-saja** | **635** | — |
-| **Jumlah setelah klasifikasi** | **464** | **464** |
+| **Mismatch numeric sebelum pengecualian adaptasi** | **635** | Ya |
+| **Mismatch numeric setelah klasifikasi** | **464** | **464** |
 | (a) Key ada di id tetapi tidak ada di locale lain | 8 | Ya |
 | (b) Key ada di locale lain tetapi tidak ada di id | 1 | Ya |
 | (c) Panjang array berbeda | 1 | Ya |
+| **Mismatch struktural** | **10** | Ya |
+| **Total mismatch terlapor** | **474** | **474** |
+
+Rekonsiliasi: 635 = 156 adaptasi mata uang + 12 adaptasi nama/konteks + 3 label + 405 nilai-beda + 59 ambigu-pemisah. Setelah 171 adaptasi dikecualikan, tersisa 464 mismatch numeric (405 nilai-beda + 59 ambigu-pemisah); 319 pasangan format-saja bernilai sama dan tidak masuk hitungan mismatch. Ditambah 10 mismatch struktural, totalnya 474.
 
 ### Uji hipotesis false positive
 

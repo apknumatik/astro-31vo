@@ -1732,6 +1732,14 @@ const totalAddedNumberMismatches = allFiles.reduce(
   (total, file) => total + file.numberMismatchesAdded,
   0,
 );
+if (
+  totalLegacyNumberMismatches -
+    totalRemovedNumberMismatches +
+    totalAddedNumberMismatches !==
+  totalNormalizedNumberMismatches
+) {
+  throw new Error("Legacy/current number-mismatch totals do not reconcile");
+}
 const totalFormatOnlyPairs = allFiles.reduce(
   (total, file) => total + file.formatOnlyPairs,
   0,
@@ -1756,6 +1764,27 @@ const totalNumberClasses = allFiles.reduce<Record<NumberClass, number>>(
     "ambigu-pemisah": 0,
   },
 );
+const totalAdaptationNumberMismatches =
+  totalNumberClasses["adaptasi-mata-uang"] +
+  totalNumberClasses["adaptasi-nama-konteks"] +
+  totalNumberClasses.label;
+const totalClassifiedNumberMismatches =
+  totalNumberClasses["nilai-beda"] + totalNumberClasses["ambigu-pemisah"];
+if (
+  totalAdaptationNumberMismatches + totalClassifiedNumberMismatches !==
+  totalNormalizedNumberMismatches
+) {
+  throw new Error("Classified number-mismatch totals do not reconcile");
+}
+if (totalClassifiedNumberMismatches !== totalMismatchCounts.numbers) {
+  throw new Error("Reported numeric-mismatch total does not reconcile");
+}
+const totalStructuralMismatches =
+  totalMismatchCounts.idOnlyKeys +
+  totalMismatchCounts.extraKeys +
+  totalMismatchCounts.arrayLengths;
+const totalReportedMismatches =
+  totalStructuralMismatches + totalClassifiedNumberMismatches;
 const totalFalsePositiveHypotheses = allFiles.reduce<FalsePositiveHypotheses>(
   (totals, file) => ({
     minusSigns: totals.minusSigns + file.falsePositiveHypotheses.minusSigns,
@@ -1865,10 +1894,10 @@ const output: string[] = [
   "",
   "### Rekonsiliasi sebelum dan sesudah perbaikan parser",
   "",
-  "| Tahap | Mismatch numeric | Hilang setelah diagnosis | Baru terungkap |",
+  "| Perbandingan | Mismatch numeric | Hilang | Baru terungkap |",
   "| --- | ---: | ---: | ---: |",
-  `| Sebelum penyesuaian parser | ${totalNumberMismatchesBeforeDiagnosis} | — | — |`,
-  `| Sesudah penyesuaian parser | ${totalNormalizedNumberMismatches} | ${totalNumberMismatchesRemovedByDiagnosis} | ${totalNumberMismatchesAddedByDiagnosis} |`,
+  `| Ekstraktor digit lama → parser saat ini | ${totalLegacyNumberMismatches} → ${totalNormalizedNumberMismatches} | ${totalRemovedNumberMismatches} | ${totalAddedNumberMismatches} |`,
+  `| Pembanding sebelum diagnosis → sesudah diagnosis | ${totalNumberMismatchesBeforeDiagnosis} → ${totalNormalizedNumberMismatches} | ${totalNumberMismatchesRemovedByDiagnosis} | ${totalNumberMismatchesAddedByDiagnosis} |`,
   "",
   "### Jumlah ketidaksesuaian per jenis (seluruh file)",
   "",
@@ -1880,11 +1909,15 @@ const output: string[] = [
   `| label | ${totalNumberClasses.label} | Tidak |`,
   `| nilai-beda | ${totalNumberClasses["nilai-beda"]} | Ya |`,
   `| ambigu-pemisah | ${totalNumberClasses["ambigu-pemisah"]} | Ya |`,
-  `| **Jumlah kelas numeric sebelum pengecualian format-saja** | **${totalNormalizedNumberMismatches}** | — |`,
-  `| **Jumlah setelah klasifikasi** | **${totalNumberClasses["nilai-beda"] + totalNumberClasses["ambigu-pemisah"]}** | **${totalMismatchCounts.numbers}** |`,
+  `| **Mismatch numeric sebelum pengecualian adaptasi** | **${totalNormalizedNumberMismatches}** | Ya |`,
+  `| **Mismatch numeric setelah klasifikasi** | **${totalClassifiedNumberMismatches}** | **${totalMismatchCounts.numbers}** |`,
   `| (a) Key ada di id tetapi tidak ada di locale lain | ${totalMismatchCounts.idOnlyKeys} | Ya |`,
   `| (b) Key ada di locale lain tetapi tidak ada di id | ${totalMismatchCounts.extraKeys} | Ya |`,
   `| (c) Panjang array berbeda | ${totalMismatchCounts.arrayLengths} | Ya |`,
+  `| **Mismatch struktural** | **${totalStructuralMismatches}** | Ya |`,
+  `| **Total mismatch terlapor** | **${totalReportedMismatches}** | **${totalReportedMismatches}** |`,
+  "",
+  `Rekonsiliasi: ${totalNormalizedNumberMismatches} = ${totalNumberClasses["adaptasi-mata-uang"]} adaptasi mata uang + ${totalNumberClasses["adaptasi-nama-konteks"]} adaptasi nama/konteks + ${totalNumberClasses.label} label + ${totalNumberClasses["nilai-beda"]} nilai-beda + ${totalNumberClasses["ambigu-pemisah"]} ambigu-pemisah. Setelah ${totalAdaptationNumberMismatches} adaptasi dikecualikan, tersisa ${totalClassifiedNumberMismatches} mismatch numeric (${totalNumberClasses["nilai-beda"]} nilai-beda + ${totalNumberClasses["ambigu-pemisah"]} ambigu-pemisah); ${totalFormatOnlyPairs} pasangan format-saja bernilai sama dan tidak masuk hitungan mismatch. Ditambah ${totalStructuralMismatches} mismatch struktural, totalnya ${totalReportedMismatches}.`,
   "",
   "### Uji hipotesis false positive",
   "",
