@@ -1,1 +1,12 @@
-{}
+{
+  "welcome": "欢迎来到本应用",
+  "appName": "NUMATIK",
+  "subtitle": "借助信息与通信技术\n开展主动数学素养学习",
+  "schoolYear": "2026 – 2027 学年",
+  "desktopAvailableText": "也可通过 www.numatik.app 在桌面端使用",
+  "start": "🚀 开始",
+  "marquee": "✨ 初中数学互动多媒体学习应用 ✨",
+  "languageLabel": "选择语言",
+  "soundOn": "开启声音",
+  "soundOff": "关闭声音"
+}
