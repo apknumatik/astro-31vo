@@ -234,10 +234,18 @@ const ThemePickerModal = ({ open, onClose, onContinue }: Props) => {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.28 }}
-          className="fixed inset-0 z-[80] flex flex-col"
+          className="theme-picker-root fixed inset-0 z-[80] flex flex-col"
         >
           {/* ── Full-screen preview (fills all space above the panel) ── */}
-          <div className="relative flex-1 min-h-0 overflow-hidden">
+          <div className="theme-picker-preview relative flex-1 min-h-0 overflow-hidden">
+            <div className="theme-math-decor" aria-hidden="true">
+              <span className="theme-math-grid-symbol symbol-pi">π</span>
+              <span className="theme-math-grid-symbol symbol-sigma">Σ</span>
+              <span className="theme-math-grid-symbol symbol-square">x²</span>
+              <span className="theme-math-grid-symbol symbol-angle">∠</span>
+              <span className="theme-math-axis axis-x" />
+              <span className="theme-math-axis axis-y" />
+            </div>
             <AnimatePresence mode="wait">
               <motion.div
                 key={selected}
@@ -281,17 +289,25 @@ const ThemePickerModal = ({ open, onClose, onContinue }: Props) => {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 80, opacity: 0 }}
             transition={{ type: "spring", stiffness: 300, damping: 28, delay: 0.1 }}
-            className="relative z-20 bg-gradient-to-b from-[#0e1326] to-[#0a0f1e] border-t border-white/10 shadow-2xl shadow-black/60"
+            className="theme-picker-panel relative z-20 bg-gradient-to-b from-[#0e1326] to-[#0a0f1e] border-t border-white/10 shadow-2xl shadow-black/60"
           >
             {/* Drag handle */}
-            <div className="flex justify-center pt-2.5 pb-1">
+            <div className="theme-picker-drag-handle flex justify-center pt-2.5 pb-1">
               <div className="w-9 h-1 rounded-full bg-white/20" />
             </div>
 
-            <div className="px-5 pt-1 pb-5">
+            <div className="theme-picker-math relative px-5 pt-1 pb-5 overflow-hidden">
+              <div className="theme-picker-math-pattern" aria-hidden="true">
+                <span>π</span><span>Σ</span><span>△</span><span>√</span><span>∞</span>
+              </div>
+              <div className="picker-progress" aria-label="Theme 1 of 2">
+                <div className="picker-progress-step is-active"><span>01</span><b>{t("selectTheme")}</b></div>
+                <div className="picker-progress-line" />
+                <div className="picker-progress-step"><span>02</span><b>{t("selectLanguage")}</b></div>
+              </div>
 
               {/* Header row */}
-              <div className="flex items-center justify-between mb-3">
+              <div className="theme-picker-heading flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center">
                     <span className="text-sm">🎨</span>
@@ -314,7 +330,7 @@ const ThemePickerModal = ({ open, onClose, onContinue }: Props) => {
               </div>
 
               {/* Theme selector strip */}
-              <div className="grid grid-cols-7 gap-2 mb-3">
+              <div className="theme-button-grid grid grid-cols-7 gap-2 mb-4">
                 {THEMES.map((thm) => {
                   const isActive = selected === thm.id;
                   return (
@@ -322,7 +338,7 @@ const ThemePickerModal = ({ open, onClose, onContinue }: Props) => {
                       key={thm.id}
                       onClick={() => handleSelect(thm.id)}
                       title={t(`themeNames.${thm.id}`)}
-                      className={`relative rounded-xl flex flex-col items-center gap-1 py-2 px-1 border-2 transition-all duration-200 cursor-pointer ${
+                      className={`future-theme-option relative rounded-xl flex flex-col items-center gap-1 py-2 px-1 border-2 transition-all duration-200 cursor-pointer ${
                         isActive
                           ? `border-transparent ring-2 ${thm.ring}`
                           : "border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/25 ring-0"
@@ -332,7 +348,10 @@ const ThemePickerModal = ({ open, onClose, onContinue }: Props) => {
                         className="w-full h-7 rounded-lg border border-black/10"
                         style={{ background: thm.swatch }}
                       />
-                      <span className="text-[13px] leading-none">{thm.emoji}</span>
+                      <span className="future-theme-emoji text-[14px] leading-none">{thm.emoji}</span>
+                      <span className="future-theme-name">
+                        {t(`themeNames.${thm.id}`)}
+                      </span>
 
                       {isActive && (
                         <motion.div

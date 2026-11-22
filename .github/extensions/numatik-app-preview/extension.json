@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "initialization": "module",
+  "canvases": [
+    {
+      "id": "numatik-app-preview",
+      "displayName": "Numatik App Preview",
+      "description": "Menampilkan dan mencoba preview aplikasi Numatik secara langsung.",
+      "actions": [
+        {
+          "name": "reload_preview",
+          "description": "Memuat ulang preview aplikasi Numatik."
+        }
+      ]
+    }
+  ]
+}

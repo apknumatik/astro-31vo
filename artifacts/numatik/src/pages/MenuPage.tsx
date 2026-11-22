@@ -543,7 +543,7 @@ const MenuPage = () => {
   return (
     <div className="menu-page menu-app-root" data-tab-active={isPageVisible}>
       <StarfieldVisibilityContext.Provider value={isPageVisible}>
-        <Starfield />
+        <Starfield matchWelcome />
       </StarfieldVisibilityContext.Provider>
       <div className="menu-mobile-layout">
         <header className="menu-mobile-header">

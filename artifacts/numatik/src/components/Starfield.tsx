@@ -103,6 +103,69 @@ const StarCanvas = () => {
   return <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-0" />;
 };
 
+const WelcomeStyleStarCanvas = () => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let width = 0;
+    let height = 0;
+    let pixelRatio = 1;
+    const resize = () => {
+      pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width * pixelRatio;
+      canvas.height = height * pixelRatio;
+      ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+    };
+    resize();
+    window.addEventListener("resize", resize);
+
+    const starCount = Math.min(380, Math.floor((width * height) / 3800) + 110);
+    const stars = Array.from({ length: starCount }, () => ({
+      x: Math.random() * 2 - 1,
+      y: Math.random() * 2 - 1,
+      z: Math.random(),
+      hue: Math.random() < 0.2 ? 190 : Math.random() < 0.1 ? 270 : 210,
+    }));
+
+    const stop = startLoop(() => {
+      ctx.clearRect(0, 0, width, height);
+      const focalLength = Math.max(width, height) * 0.5;
+      stars.forEach((star) => {
+        star.z -= 0.0009;
+        if (star.z <= 0.02) {
+          star.z = 1;
+          star.x = Math.random() * 2 - 1;
+          star.y = Math.random() * 2 - 1;
+          return;
+        }
+
+        const inverseDepth = 1 / star.z;
+        const x = width / 2 + star.x * focalLength * inverseDepth * 0.25;
+        const y = height / 2 + star.y * focalLength * inverseDepth * 0.25;
+        const alpha = Math.min(1, (1 - star.z) * 1.6 + 0.15);
+        const radius = Math.max(0.4, (1 - star.z) * 2.2);
+        ctx.fillStyle = `hsla(${star.hue},90%,80%,${alpha})`;
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    });
+
+    return () => {
+      stop();
+      window.removeEventListener("resize", resize);
+    };
+  }, []);
+
+  return <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-0 welcome-style-starfield" />;
+};
+
 // ── 2. Snow: crystal snowflakes ────────────────────────────────
 const SnowCanvas = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -346,7 +409,7 @@ const CloudCanvas = () => {
 };
 
 // ── Theme-aware switcher ───────────────────────────────────────
-const Starfield = () => {
+const Starfield = ({ matchWelcome = false }: { matchWelcome?: boolean }) => {
   const isVisible = useContext(StarfieldVisibilityContext);
   const { animationsOn } = useAnimations();
   const { theme } = useTheme();
@@ -364,6 +427,7 @@ const Starfield = () => {
   if (!isVisible || !animationsOn || prefersReducedMotion) return null;
 
   switch (theme) {
+    case "dark":    return matchWelcome ? <WelcomeStyleStarCanvas /> : <StarCanvas />;
     case "light":   return <SnowCanvas />;
     case "white":   return <WhiteCanvas />;
     case "pastel":  return <WhiteCanvas />;
