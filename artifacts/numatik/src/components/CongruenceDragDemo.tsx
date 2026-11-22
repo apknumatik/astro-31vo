@@ -65,11 +65,11 @@ const zhCN: T = {
 const ru: T = {
   fixedLabel: "Фигура 1 (неподвижная)",
   moveLabel: "← Перетащите влево",
-  snappedLabel: "✓ ИДЕАЛЬНО СОВПАЛИ — ФИГУРЫ РАВНЫ!",
+  snappedLabel: "✓ ИДЕАЛЬНО СОВПАЛИ — ФИГУРЫ КОНГРУЭНТНЫ!",
   dragInstruction: "👆 Перетащите зелёную фигуру влево и точно наложите её на жёлтую!",
   snappedMessageBefore: "🎉 Обе фигуры ",
   snappedMessageEmphasis: "полностью совпадают",
-  snappedMessageAfter: " — это и означает равенство фигур!",
+  snappedMessageAfter: " — это и означает конгруэнтность фигур!",
   resetLabel: "↺ Сбросить",
 };
 

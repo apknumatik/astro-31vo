@@ -25,7 +25,7 @@
 | Modus | Mode | Mod | 最頻値 | 众数 | Мода |
 | Transformasi | Transformations | Penjelmaan | 図形の変換 | 图形变换 | Преобразования |
 | Kesebangunan | Similarity | Keserupaan | 相似 | 相似 | Подобие |
-| Kekongruenan | Congruence | Kekongruenan | 合同 | 全等 | Конгруэнтность |
+| Kekongruenan | Congruence | Kekongruenan | 合同 | 全等 | Конгруэнтность фигур |
 | Faktor skala | Scale factor | Faktor skala | 相似比 | 相似比 | Коэффициент подобия |
 | Sisi bersesuaian | Corresponding sides | Sisi sepadan | 対応する辺 | 对应边 | Соответствующие стороны |
 | Sudut bersesuaian | Corresponding angles | Sudut sepadan | 対応する角 | 对应角 | Соответствующие углы |
