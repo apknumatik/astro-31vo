@@ -21,7 +21,7 @@ const LANGUAGES: ReadonlyArray<{ id: Language; name: string }> = [
   { id: "ru", name: "Русский" },
 ];
 
-const THEMES: readonly Theme[] = ["dark", "sunset", "pastel", "ocean", "light", "forest", "white"];
+const THEMES: readonly Theme[] = ["dark", "sunset", "pastel", "ocean", "light", "forest"];
 const MUSIC_TRACKS = [{ id: "none", name: "None", emoji: "🔇" }, ...MP3_TRACKS, ...TRACKS];
 
 const MenuHeaderControls = () => {

@@ -83,7 +83,7 @@ const allTopics: Topic[] = [
 const TKAPage = () => {
   const navigate = useNavigate();
   const { theme } = useTheme();
-  const isWhite = theme === "white" || theme === "pastel";
+  const isWhite = theme === "pastel";
   const [showModul, setShowModul] = useState(() =>
     sessionStorage.getItem("tka_showModul") === "true"
   );

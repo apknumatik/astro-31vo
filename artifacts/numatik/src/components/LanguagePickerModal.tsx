@@ -1,85 +1,365 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Globe, Settings } from "lucide-react";
+import { Settings } from "lucide-react";
+import * as THREE from "three";
 import { useTranslation } from "react-i18next";
 import { useLanguage, Language } from "@/contexts/LanguageContext";
 import { useTheme } from "@/contexts/ThemeContext";
+import { pickLang } from "@/lib/pickLang";
 import { playPopSound } from "@/hooks/useAudio";
 
 type LangDef = {
   id: Language;
+  code: string;
   flag: string;
   native: string;
-  label: string;
-  sub: string;
-  gradient: string;
   ring: string;
-  glow: string;
 };
 
 const LANGUAGES: LangDef[] = [
   {
     id: "id",
+    code: "ID",
     flag: "🇮🇩",
     native: "Bahasa Indonesia",
-    label: "Indonesia",
-    sub: "Bahasa resmi aplikasi",
-    gradient: "linear-gradient(135deg,#dc2626,#ffffff,#dc2626)",
     ring: "ring-red-400 shadow-[0_0_16px_rgba(220,38,38,0.55)]",
-    glow: "rgba(220,38,38,0.35)",
   },
   {
     id: "en",
+    code: "EN",
     flag: "🇬🇧",
     native: "English",
-    label: "English",
-    sub: "International language",
-    gradient: "linear-gradient(135deg,#1d4ed8,#ffffff,#dc2626)",
     ring: "ring-blue-400 shadow-[0_0_16px_rgba(29,78,216,0.55)]",
-    glow: "rgba(29,78,216,0.35)",
   },
   {
     id: "ms-MY",
+    code: "MS",
     flag: "🇲🇾",
-    native: "Bahasa Melayu (Malaysia)",
-    label: "Malay (Malaysia)",
-    sub: "Terjemahan menu menyusul",
-    gradient: "linear-gradient(135deg,#1d4ed8,#dc2626,#facc15)",
+    native: "Bahasa Melayu",
     ring: "ring-blue-400 shadow-[0_0_16px_rgba(29,78,216,0.55)]",
-    glow: "rgba(29,78,216,0.35)",
   },
   {
     id: "ja",
+    code: "JA",
     flag: "🇯🇵",
     native: "日本語",
-    label: "Japanese",
-    sub: "にほんご",
-    gradient: "linear-gradient(135deg,#dc2626,#ffffff,#dc2626)",
     ring: "ring-rose-400 shadow-[0_0_16px_rgba(244,63,94,0.55)]",
-    glow: "rgba(244,63,94,0.35)",
   },
   {
     id: "zh-CN",
+    code: "ZH",
     flag: "🇨🇳",
     native: "简体中文",
-    label: "Mandarin Chinese",
-    sub: "Menu translations will follow",
-    gradient: "linear-gradient(135deg,#dc2626,#facc15)",
     ring: "ring-red-400 shadow-[0_0_16px_rgba(220,38,38,0.55)]",
-    glow: "rgba(220,38,38,0.35)",
   },
   {
     id: "ru",
+    code: "RU",
     flag: "🇷🇺",
     native: "Русский",
-    label: "Russian",
-    sub: "Перевод меню будет добавлен позже",
-    gradient: "linear-gradient(135deg,#ffffff,#2563eb,#dc2626)",
     ring: "ring-blue-400 shadow-[0_0_16px_rgba(37,99,235,0.55)]",
-    glow: "rgba(37,99,235,0.35)",
   },
 ];
+
+const LANGUAGE_GREETINGS: Record<Language, string> = {
+  id: "Halo!",
+  en: "Hello!",
+  "ms-MY": "Hai!",
+  ja: "こんにちは",
+  "zh-CN": "你好",
+  ru: "Привет",
+};
+
+const LANGUAGE_CONTINUE_LABELS: Record<Language, string> = {
+  id: "Lanjut",
+  en: "Continue",
+  "ms-MY": "Teruskan",
+  ja: "続ける",
+  "zh-CN": "继续",
+  ru: "Продолжить",
+};
+
+const LANGUAGE_ACCENTS: Record<Language, string> = {
+  id: "#dc2626",
+  en: "#1d4ed8",
+  "ms-MY": "#059669",
+  ja: "#be123c",
+  "zh-CN": "#dc2626",
+  ru: "#1d4ed8",
+};
+
+const getLanguageCardStyle = (language: Language, isActive: boolean, isDark: boolean) => {
+  const accent = LANGUAGE_ACCENTS[language];
+  const base = isDark ? "#081426" : "#ffffff";
+  const borderMix = isActive ? "82%" : "62%";
+  return {
+    background: isDark
+      ? `linear-gradient(145deg, color-mix(in srgb, ${accent} ${isActive ? "46%" : "32%"}, ${base}), color-mix(in srgb, ${accent} ${isActive ? "30%" : "20%"}, #101b30))`
+      : `linear-gradient(145deg, color-mix(in srgb, ${accent} ${isActive ? "24%" : "14%"}, #ffffff), color-mix(in srgb, ${accent} ${isActive ? "14%" : "6%"}, #f8fafc))`,
+    borderColor: `color-mix(in srgb, ${accent} ${borderMix}, ${isDark ? "#e0f2fe" : "#0f172a"})`,
+    boxShadow: isActive
+      ? `0 0 0 2px ${accent}, inset 0 2px 0 rgba(255,255,255,.28), 0 6px 0 color-mix(in srgb, ${accent} 58%, #0f172a), 0 13px 22px color-mix(in srgb, ${accent} 28%, transparent)`
+      : `inset 0 2px 0 rgba(255,255,255,.48), inset 0 -3px 0 color-mix(in srgb, ${accent} 18%, transparent), 0 5px 0 color-mix(in srgb, ${accent} 38%, #64748b), 0 10px 18px rgba(15,23,42,.16)`,
+  };
+};
+
+const createEarthTexture = () => {
+  const canvas = document.createElement("canvas");
+  canvas.width = 1024;
+  canvas.height = 512;
+  const context = canvas.getContext("2d");
+  if (!context) throw new Error("Unable to create the globe texture canvas");
+
+  const ocean = context.createLinearGradient(0, 0, 0, canvas.height);
+  ocean.addColorStop(0, "#071f52");
+  ocean.addColorStop(0.42, "#075da3");
+  ocean.addColorStop(0.68, "#0874b5");
+  ocean.addColorStop(1, "#041a45");
+  context.fillStyle = ocean;
+  context.fillRect(0, 0, canvas.width, canvas.height);
+
+  context.strokeStyle = "rgba(164,218,255,.075)";
+  context.lineWidth = 1;
+  for (let latitude = -60; latitude <= 60; latitude += 30) {
+    const y = ((90 - latitude) / 180) * canvas.height;
+    context.beginPath();
+    context.ellipse(canvas.width / 2, y, canvas.width / 2, Math.max(12, Math.cos(latitude * Math.PI / 180) * 55), 0, 0, Math.PI * 2);
+    context.stroke();
+  }
+  for (let longitude = -60; longitude <= 60; longitude += 30) {
+    const x = ((longitude + 180) / 360) * canvas.width;
+    context.beginPath();
+    context.ellipse(x, canvas.height / 2, 55, canvas.height / 2, 0, 0, Math.PI * 2);
+    context.stroke();
+  }
+
+  const continents = [
+    [[0.08,0.2],[0.12,0.12],[0.2,0.1],[0.24,0.16],[0.22,0.23],[0.19,0.25],[0.2,0.33],[0.16,0.4],[0.13,0.35],[0.11,0.27]],
+    [[0.22,0.42],[0.27,0.45],[0.28,0.54],[0.26,0.62],[0.25,0.72],[0.22,0.79],[0.2,0.68],[0.21,0.57],[0.19,0.49]],
+    [[0.43,0.18],[0.48,0.13],[0.54,0.16],[0.57,0.22],[0.54,0.28],[0.49,0.27],[0.46,0.32],[0.42,0.29]],
+    [[0.43,0.34],[0.48,0.31],[0.53,0.35],[0.54,0.46],[0.51,0.55],[0.49,0.67],[0.46,0.74],[0.43,0.63],[0.42,0.51],[0.4,0.42]],
+    [[0.55,0.19],[0.61,0.13],[0.7,0.14],[0.77,0.2],[0.84,0.19],[0.89,0.24],[0.87,0.3],[0.8,0.31],[0.76,0.37],[0.69,0.35],[0.66,0.42],[0.6,0.4],[0.57,0.32]],
+    [[0.75,0.43],[0.81,0.4],[0.85,0.45],[0.83,0.55],[0.8,0.63],[0.77,0.59],[0.74,0.51]],
+    [[0.88,0.71],[0.91,0.69],[0.94,0.73],[0.92,0.78],[0.89,0.77]],
+  ];
+  const land = context.createLinearGradient(0, 70, 0, 420);
+  land.addColorStop(0, "#a2c875");
+  land.addColorStop(0.42, "#4e9a55");
+  land.addColorStop(0.72, "#8cae58");
+  land.addColorStop(1, "#b8ab68");
+  context.fillStyle = land;
+  context.strokeStyle = "rgba(196,231,154,.5)";
+  context.lineWidth = 2.5;
+  for (const continent of continents) {
+    context.beginPath();
+    continent.forEach(([x, y], index) => {
+      const px = x * canvas.width;
+      const py = y * canvas.height;
+      if (index === 0) context.moveTo(px, py);
+      else context.lineTo(px, py);
+    });
+    context.closePath();
+    context.fill();
+    context.stroke();
+  }
+
+  let seed = 3917;
+  const random = () => {
+    seed = (seed * 1664525 + 1013904223) >>> 0;
+    return seed / 4294967296;
+  };
+  context.save();
+  context.beginPath();
+  for (const continent of continents) {
+    continent.forEach(([x, y], index) => {
+      const px = x * canvas.width;
+      const py = y * canvas.height;
+      if (index === 0) context.moveTo(px, py);
+      else context.lineTo(px, py);
+    });
+    context.closePath();
+  }
+  context.clip();
+  for (let index = 0; index < 2800; index += 1) {
+    const x = random() * canvas.width;
+    const y = random() * canvas.height;
+    const size = 1 + random() * 4;
+    const warmTerrain = y < 175 || y > 330;
+    context.fillStyle = warmTerrain
+      ? `rgba(205,183,112,${0.08 + random() * 0.16})`
+      : `rgba(195,232,138,${0.08 + random() * 0.18})`;
+    context.beginPath();
+    context.ellipse(x, y, size * (1.2 + random()), size, random() * Math.PI, 0, Math.PI * 2);
+    context.fill();
+  }
+  context.restore();
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.anisotropy = 4;
+  return texture;
+};
+
+const createCloudTexture = () => {
+  const canvas = document.createElement("canvas");
+  canvas.width = 1024;
+  canvas.height = 512;
+  const context = canvas.getContext("2d");
+  if (!context) throw new Error("Unable to create the cloud texture canvas");
+
+  let seed = 1789;
+  const random = () => {
+    seed = (seed * 1664525 + 1013904223) >>> 0;
+    return seed / 4294967296;
+  };
+  context.filter = "blur(4px)";
+  for (let index = 0; index < 85; index += 1) {
+    const centerX = random() * canvas.width;
+    const centerY = 65 + random() * 380;
+    const width = 25 + random() * 68;
+    const height = 5 + random() * 15;
+    context.fillStyle = `rgba(235,249,255,${0.08 + random() * 0.12})`;
+    context.beginPath();
+    context.ellipse(centerX, centerY, width, height, (random() - 0.5) * 0.45, 0, Math.PI * 2);
+    context.fill();
+    for (let puff = 0; puff < 4; puff += 1) {
+      context.beginPath();
+      context.ellipse(
+        centerX + (random() - 0.5) * width,
+        centerY + (random() - 0.5) * height,
+        width * (0.18 + random() * 0.2),
+        height * (0.45 + random() * 0.75),
+        (random() - 0.5) * 0.5,
+        0,
+        Math.PI * 2,
+      );
+      context.fill();
+    }
+  }
+  context.filter = "none";
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.anisotropy = 4;
+  return texture;
+};
+
+const LanguageGlobe = () => {
+  const mountRef = useRef<HTMLDivElement>(null);
+  const [unavailable, setUnavailable] = useState(false);
+
+  useEffect(() => {
+    const mount = mountRef.current;
+    if (!mount) return;
+
+    let renderer: THREE.WebGLRenderer;
+    try {
+      renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    } catch {
+      setUnavailable(true);
+      return;
+    }
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 20);
+    camera.position.z = 3.35;
+
+    const geometry = new THREE.SphereGeometry(1, 64, 48);
+    const material = new THREE.MeshStandardMaterial({
+      map: createEarthTexture(),
+      roughness: 0.96,
+      metalness: 0,
+    });
+    const globe = new THREE.Mesh(geometry, material);
+    scene.add(globe);
+    const cloudsGeometry = new THREE.SphereGeometry(1.008, 64, 48);
+    const cloudsMaterial = new THREE.MeshBasicMaterial({
+      map: createCloudTexture(),
+      transparent: true,
+      opacity: 0.52,
+      depthWrite: false,
+    });
+    const clouds = new THREE.Mesh(cloudsGeometry, cloudsMaterial);
+    clouds.renderOrder = 1;
+    scene.add(clouds);
+    scene.add(new THREE.AmbientLight(0x789bc7, 0.95));
+    const keyLight = new THREE.DirectionalLight(0xffffff, 2.4);
+    keyLight.position.set(-2.5, 2, 4);
+    scene.add(keyLight);
+    const rimLight = new THREE.DirectionalLight(0x238dff, 1.8);
+    rimLight.position.set(3, -0.5, -2);
+    scene.add(rimLight);
+
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setClearColor(0x000000, 0);
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.08;
+    renderer.domElement.setAttribute("aria-hidden", "true");
+    mount.appendChild(renderer.domElement);
+
+    const resize = () => {
+      const size = Math.max(1, Math.min(mount.clientWidth, mount.clientHeight));
+      renderer.setSize(size, size, false);
+      camera.aspect = 1;
+      camera.updateProjectionMatrix();
+    };
+    const observer = new ResizeObserver(resize);
+    observer.observe(mount);
+    resize();
+
+    let animationFrame = 0;
+    const animate = () => {
+      globe.rotation.y += 0.0032;
+      clouds.rotation.y += 0.0037;
+      renderer.render(scene, camera);
+      animationFrame = window.requestAnimationFrame(animate);
+    };
+    animate();
+
+    return () => {
+      window.cancelAnimationFrame(animationFrame);
+      observer.disconnect();
+      geometry.dispose();
+      cloudsGeometry.dispose();
+      material.map?.dispose();
+      material.dispose();
+      cloudsMaterial.map?.dispose();
+      cloudsMaterial.dispose();
+      renderer.dispose();
+      renderer.domElement.remove();
+    };
+  }, []);
+
+  return (
+    <div ref={mountRef} className={`language-globe${unavailable ? " is-unavailable" : ""}`} aria-hidden="true">
+      {unavailable && (
+        <svg viewBox="0 0 160 160" role="presentation">
+          <defs>
+            <radialGradient id="language-globe-ocean" cx="32%" cy="28%">
+              <stop offset="0%" stopColor="#5ee8ff" />
+              <stop offset="62%" stopColor="#1384b5" />
+              <stop offset="100%" stopColor="#06294d" />
+            </radialGradient>
+            <clipPath id="language-globe-clip"><circle cx="80" cy="80" r="63" /></clipPath>
+          </defs>
+          <circle cx="80" cy="80" r="63" fill="url(#language-globe-ocean)" />
+          <g clipPath="url(#language-globe-clip)" fill="#78d69a" stroke="#d1fae5" strokeOpacity=".6">
+            <path d="M22 48 36 31 54 28 62 39 57 53 48 58 51 71 42 82 34 71 31 58Z" />
+            <path d="m51 85 12 4 6 16-6 21-8 13-7-22 3-17-7-9Z" />
+            <path d="m72 44 14-8 12 4 2 10-13 6-8-4Z" />
+            <path d="m82 62 17-8 13 9 2 20-10 14-3 20-10 12-8-18 2-17-8-16Z" />
+            <path d="m101 41 16-9 22 4 12 13-11 10-16-3-7 12-12-5-7-11Z" />
+            <path d="m122 82 13-5 10 8-7 18-10 10-9-13Z" />
+          </g>
+          <ellipse cx="80" cy="80" rx="26" ry="63" fill="none" stroke="#dff8ff" strokeOpacity=".42" />
+          <path d="M17 80h126M25 57h110M25 103h110" fill="none" stroke="#dff8ff" strokeOpacity=".3" />
+          <circle cx="80" cy="80" r="63" fill="none" stroke="#e0f2fe" strokeOpacity=".8" strokeWidth="2" />
+        </svg>
+      )}
+    </div>
+  );
+};
 
 type ThemeStyles = {
   topBg: string;
@@ -95,7 +375,6 @@ type ThemeStyles = {
   dragHandle: string;
   headerTitle: string;
   headerSub: string;
-  cardInactive: string;
   cardText: string;
   cardSubText: string;
   checkBg: string;
@@ -122,7 +401,6 @@ function getThemeStyles(theme: string): ThemeStyles {
         dragHandle: "bg-sky-300/25",
         headerTitle: "text-sky-50",
         headerSub: "text-sky-200/50",
-        cardInactive: "border-sky-400/20 bg-sky-300/8 hover:bg-sky-300/12 hover:border-sky-400/35",
         cardText: "text-sky-50",
         cardSubText: "text-sky-200/55",
         checkBg: "bg-sky-400/80",
@@ -147,7 +425,6 @@ function getThemeStyles(theme: string): ThemeStyles {
         dragHandle: "bg-violet-300/40",
         headerTitle: "text-indigo-950",
         headerSub: "text-indigo-700/65",
-        cardInactive: "border-violet-200 bg-white/70 hover:bg-violet-50 hover:border-violet-300",
         cardText: "text-indigo-950",
         cardSubText: "text-indigo-700/70",
         checkBg: "bg-violet-500",
@@ -158,7 +435,6 @@ function getThemeStyles(theme: string): ThemeStyles {
       };
 
     case "light":
-    case "white":
       return {
         topBg: "linear-gradient(160deg,#c7d2fe 0%,#e0e7ff 50%,#bfdbfe 100%)",
         topTextTitle: "text-indigo-900/85",
@@ -173,7 +449,6 @@ function getThemeStyles(theme: string): ThemeStyles {
         dragHandle: "bg-indigo-300/40",
         headerTitle: "text-indigo-900",
         headerSub: "text-indigo-600/60",
-        cardInactive: "border-indigo-200 bg-indigo-50 hover:bg-indigo-100 hover:border-indigo-300",
         cardText: "text-indigo-900",
         cardSubText: "text-indigo-600/65",
         checkBg: "bg-indigo-500",
@@ -198,7 +473,6 @@ function getThemeStyles(theme: string): ThemeStyles {
         dragHandle: "bg-green-400/35",
         headerTitle: "text-green-900",
         headerSub: "text-green-700/60",
-        cardInactive: "border-green-200 bg-green-50 hover:bg-green-100 hover:border-green-300",
         cardText: "text-green-900",
         cardSubText: "text-green-700/65",
         checkBg: "bg-green-600",
@@ -223,7 +497,6 @@ function getThemeStyles(theme: string): ThemeStyles {
         dragHandle: "bg-orange-400/35",
         headerTitle: "text-orange-900",
         headerSub: "text-orange-700/60",
-        cardInactive: "border-orange-200 bg-orange-50 hover:bg-orange-100 hover:border-orange-300",
         cardText: "text-orange-900",
         cardSubText: "text-orange-700/65",
         checkBg: "bg-orange-500",
@@ -248,7 +521,6 @@ function getThemeStyles(theme: string): ThemeStyles {
         dragHandle: "bg-white/20",
         headerTitle: "text-white",
         headerSub: "text-white/40",
-        cardInactive: "border-white/10 bg-white/5 hover:bg-white/8 hover:border-white/20",
         cardText: "text-white",
         cardSubText: "text-white/45",
         checkBg: "bg-cyan-400/80",
@@ -272,34 +544,53 @@ const LanguagePickerModal = ({ open, onClose }: Props) => {
   const { t } = useTranslation();
   const [selected, setSelected] = useState<Language>(language);
   const [confirming, setConfirming] = useState(false);
+  const [launching, setLaunching] = useState(false);
 
   const s = getThemeStyles(theme);
+  const isDarkTheme = theme === "dark" || theme === "ocean";
+
+  useEffect(() => {
+    if (open) {
+      setSelected(language);
+      setConfirming(false);
+      setLaunching(false);
+    }
+  }, [open, language]);
 
   const handleSelect = (id: Language) => {
     playPopSound();
+    navigator.vibrate?.(10);
     setSelected(id);
     setLanguage(id);
+    const url = new URL(window.location.href);
+    url.searchParams.set("lang", id);
+    window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
   };
 
   const handleContinue = () => {
     playPopSound();
     setConfirming(true);
+    setLaunching(true);
     setLanguage(selected);
-    setTimeout(() => navigate("/menu"), 350);
+    const url = new URL(window.location.href);
+    url.searchParams.set("lang", selected);
+    window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
+    setTimeout(() => navigate("/menu", { state: { showLearningWelcome: true } }), 900);
   };
 
   const activeDef = LANGUAGES.find((l) => l.id === selected)!;
 
-  const floatingWords = [
-    { text: "Halo!", lang: "id", x: "10%", y: "15%", delay: 0 },
-    { text: "Hello!", lang: "en", x: "65%", y: "10%", delay: 0.4 },
-    { text: "こんにちは！", lang: "ja", x: "45%", y: "38%", delay: 0.8 },
-    { text: "Selamat belajar", lang: "id", x: "5%", y: "55%", delay: 1.2 },
-    { text: "Let's learn!", lang: "en", x: "58%", y: "62%", delay: 0.6 },
-    { text: "がんばって！", lang: "ja", x: "15%", y: "74%", delay: 1.0 },
-    { text: "Matematika", lang: "id", x: "62%", y: "80%", delay: 0.2 },
-    { text: "Mathematics", lang: "en", x: "2%", y: "85%", delay: 1.4 },
-  ];
+  const activeIndex = LANGUAGES.findIndex((item) => item.id === selected);
+  const greetings = LANGUAGES.map((lang, index) => {
+    const angle = ((index - activeIndex + LANGUAGES.length) % LANGUAGES.length) * 60 - 90;
+    const radians = (angle * Math.PI) / 180;
+    return {
+      lang,
+      x: 50 + Math.cos(radians) * 38,
+      y: 50 + Math.sin(radians) * 29,
+      delay: index * 0.12,
+    };
+  });
 
   return (
     <AnimatePresence>
@@ -335,29 +626,54 @@ const LanguagePickerModal = ({ open, onClose }: Props) => {
               }}
             />
 
-            {/* Floating translated words */}
-            {floatingWords.map((w, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: [0, 0.55, 0.35, 0.55], y: [8, 0, -4, 0] }}
-                transition={{ delay: w.delay, duration: 3.5, repeat: Infinity, repeatType: "loop" }}
-                className={`absolute font-display font-bold text-xs select-none pointer-events-none ${s.floatingWordColor}`}
-                style={{ left: w.x, top: w.y }}
-              >
-                {w.text}
-              </motion.div>
-            ))}
+            {/* Orbiting greetings */}
+            <motion.div
+              className="language-greetings-orbit absolute inset-0 pointer-events-none"
+              animate={{ rotate: 360 }}
+              transition={{ duration: 42, repeat: Infinity, ease: "linear" }}
+            >
+              {greetings.map(({ lang, x, y, delay }) => (
+                <div
+                  key={lang.id}
+                  className="language-orbit-position absolute"
+                  style={{ left: `${x}%`, top: `${y}%` }}
+                >
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{
+                      rotate: -360,
+                      opacity: selected === lang.id ? 1 : 0.62,
+                      scale: selected === lang.id ? 1.15 : 1,
+                    }}
+                    transition={{
+                      rotate: { duration: 42, repeat: Infinity, ease: "linear" },
+                      opacity: { delay, duration: 0.35 },
+                      scale: { duration: 0.35 },
+                    }}
+                    className={`language-orbit-greeting font-display font-bold text-xs select-none ${s.floatingWordColor} ${selected === lang.id ? "is-selected" : ""}`}
+                  >
+                    {pickLang(LANGUAGE_GREETINGS, lang.id)}
+                  </motion.div>
+                </div>
+              ))}
+            </motion.div>
 
             {/* Center globe */}
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                className="text-6xl select-none"
-              >
-                🌏
-              </motion.div>
+              <div className="language-globe-wrap">
+                <motion.div
+                  key={selected}
+                  className="language-greeting-bubble"
+                  initial={{ opacity: 0, scale: 0.65, y: 22 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  transition={{ type: "spring", stiffness: 280, damping: 16, delay: 0.12 }}
+                  style={{ transformOrigin: "left bottom" }}
+                >
+                  {pickLang(LANGUAGE_GREETINGS, selected)}
+                </motion.div>
+                <div className="language-globe-glow" aria-hidden="true" />
+                <LanguageGlobe />
+              </div>
               <motion.p
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -366,22 +682,6 @@ const LanguagePickerModal = ({ open, onClose }: Props) => {
               >
                 {t("selectLanguage").toUpperCase()}
               </motion.p>
-              <motion.p
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.45 }}
-                className={`font-body text-xs ${s.topTextSub}`}
-              >
-                Select your language · 言語を選んでください
-              </motion.p>
-            </div>
-
-            {/* Preview label */}
-            <div className={`absolute top-4 left-4 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full border ${s.topBadgeBg} ${s.topBadgeBorder}`}>
-              <Globe className={`w-3 h-3 ${s.topBadgeText} opacity-60`} />
-              <span className={`text-[10px] font-body font-semibold uppercase tracking-widest ${s.topBadgeText}`}>
-                Language / Bahasa / 言語
-              </span>
             </div>
 
             {/* Active language badge */}
@@ -392,7 +692,7 @@ const LanguagePickerModal = ({ open, onClose }: Props) => {
               className={`absolute top-4 right-4 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full border ${s.topBadgeBg} ${s.topBadgeBorder}`}
             >
               <span className="text-sm">{activeDef.flag}</span>
-              <span className={`font-display text-[11px] font-bold ${s.topBadgeText}`}>
+              <span className={`font-display text-xs font-bold ${s.topBadgeText}`}>
                 {activeDef.native}
               </span>
             </motion.div>
@@ -418,7 +718,7 @@ const LanguagePickerModal = ({ open, onClose }: Props) => {
               <div className="language-picker-math-pattern" aria-hidden="true">
                 <span>1+1=2</span><span>A²+B²=C²</span><span>∠90°</span>
               </div>
-              <div className="picker-progress picker-progress-language" aria-label="Language 2 of 2">
+              <div className="picker-progress picker-progress-language" aria-label={`${t("selectLanguage")} 2 of 2`}>
                 <div className="picker-progress-step"><span>01</span><b>{t("selectTheme")}</b></div>
                 <div className="picker-progress-line is-complete" />
                 <div className="picker-progress-step is-active"><span>02</span><b>{t("selectLanguage")}</b></div>
@@ -432,7 +732,7 @@ const LanguagePickerModal = ({ open, onClose }: Props) => {
                   <p className={`font-display text-[13px] font-black leading-tight ${s.headerTitle}`}>
                     {t("selectLanguage")}
                   </p>
-                  <p className={`font-body text-[10px] ${s.headerSub}`}>
+                  <p className={`font-body text-xs ${s.headerSub}`}>
                     {t("languageSubtitle")}
                   </p>
                 </div>
@@ -447,19 +747,22 @@ const LanguagePickerModal = ({ open, onClose }: Props) => {
                       key={lang.id}
                       whileTap={{ scale: 0.98 }}
                       onClick={() => handleSelect(lang.id)}
+                      aria-pressed={isActive}
                       className={`future-language-option relative flex items-center gap-3 rounded-2xl px-3 py-3 border-2 transition-all duration-200 cursor-pointer text-left ${
-                        isActive
-                          ? `border-transparent ring-2 ${lang.ring} bg-white/10`
-                          : s.cardInactive
+                        isActive ? `border-transparent ring-2 ${lang.ring}` : "border-solid"
                       }`}
+                      style={getLanguageCardStyle(lang.id, isActive, isDarkTheme)}
                     >
                       <span className="future-language-flag text-3xl leading-none">{lang.flag}</span>
                       <div className="flex-1 min-w-0">
+                        <span className={`future-language-code inline-block mb-1 ${s.cardSubText}`}>
+                          {lang.code}
+                        </span>
                         <p className={`font-display font-black text-sm leading-tight ${s.cardText}`}>
                           {lang.native}
                         </p>
-                        <p className={`font-body text-[11px] mt-0.5 truncate ${s.cardSubText}`}>
-                          {lang.sub}
+                        <p className={`font-body text-xs mt-1 ${s.cardSubText}`}>
+                          {pickLang(LANGUAGE_GREETINGS, lang.id)}
                         </p>
                       </div>
                       {isActive && (
@@ -482,19 +785,37 @@ const LanguagePickerModal = ({ open, onClose }: Props) => {
                 disabled={confirming}
                 className="w-full py-3.5 rounded-2xl font-display font-black text-[15px] text-white tracking-wide bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 transition-all shadow-lg shadow-cyan-500/30 cursor-pointer disabled:opacity-70"
               >
-                {confirming ? t("loading") : `${activeDef.flag} ${t("languageContinueText")}`}
+                {confirming ? t("loading") : pickLang(LANGUAGE_CONTINUE_LABELS, activeDef.id)}
               </motion.button>
 
               {/* Info note */}
               <div className="flex items-center gap-2 mt-2.5">
                 <Settings className={`w-3 h-3 flex-shrink-0 ${s.infoIcon}`} />
-                <p className={`font-body text-[10px] leading-snug ${s.infoText}`}>
+                <p className={`font-body text-xs leading-snug ${s.infoText}`}>
                   {t("changeLanguageHint")}{" "}
                   <span className={`font-semibold ${s.infoHighlight}`}>{t("settingsLanguage")}</span>
                 </p>
               </div>
             </div>
           </motion.div>
+          <AnimatePresence>
+            {launching && (
+              <motion.div
+                className="language-launch-overlay"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                aria-hidden="true"
+              >
+                <motion.div
+                  className="language-launch-beam"
+                  initial={{ scaleX: 0, opacity: 0 }}
+                  animate={{ scaleX: [0, 1, 1.5], opacity: [0, 1, 0] }}
+                  transition={{ duration: 0.85, ease: "easeInOut" }}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
       )}
     </AnimatePresence>

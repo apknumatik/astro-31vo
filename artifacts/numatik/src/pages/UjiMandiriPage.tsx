@@ -51,7 +51,7 @@ const packages: Package[] = [
 const UjiMandiriPage = () => {
   const navigate = useNavigate();
   const { theme } = useTheme();
-  const isLight = ["light", "white", "forest", "pastel"].includes(theme);
+  const isLight = ["light", "forest", "pastel"].includes(theme);
   const [student, setStudent] = useState({ name: "", className: "" });
   const [activeLevel, setActiveLevel] = useState<number | null>(null);
   const [answers, setAnswers] = useState<Record<number, number>>({});

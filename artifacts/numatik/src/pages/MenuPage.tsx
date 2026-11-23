@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 import {
   ArrowLeft,
   ArrowUpRight,
@@ -105,6 +106,7 @@ const TAB_ITEMS: ReadonlyArray<{
 
 const MenuPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { t } = useTranslation();
   const { soundOn } = useSound();
   const [searchQuery, setSearchQuery] = useState("");
@@ -114,6 +116,12 @@ const MenuPage = () => {
   const [recentPaths, setRecentPaths] = useState(readRecentPaths);
   const [guideSeen, setGuideSeen] = useState(hasSeenGuide);
   const [isPageVisible, setIsPageVisible] = useState(() => !document.hidden);
+
+  useEffect(() => {
+    if (location.state?.showLearningWelcome !== true) return;
+    toast.success(t("learningWelcome"));
+    navigate(location.pathname, { replace: true, state: null });
+  }, [location.pathname, location.state, navigate, t]);
 
   useEffect(() => {
     const updateVisibility = () => setIsPageVisible(!document.hidden);

@@ -944,7 +944,7 @@ const PenjumlahanBilanganBulatPage = () => {
   const navigate = useNavigate();
   const { theme } = useTheme();
   const { language } = useLanguage();
-  const lightMode = ["light", "white", "forest", "pastel"].includes(theme);
+  const lightMode = ["light", "forest", "pastel"].includes(theme);
   const [expandedSections, setExpandedSections] = useState<string[]>(["intro", "konsep", "contoh", "sifat", "kesimpulan"]);
 
   const toggleSection = (section: string) => {

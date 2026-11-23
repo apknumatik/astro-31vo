@@ -206,7 +206,7 @@ const COMING_SOON = [
 const VideoPembelajaranPage = () => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
-  const isWhite = theme === "white" || theme === "pastel";
+  const isWhite = theme === "pastel";
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [liked, setLiked] = useState(false);
