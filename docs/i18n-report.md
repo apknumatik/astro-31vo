@@ -10,7 +10,7 @@ Pemeriksaan membaca objek locale statis; spread atau key komputasi yang menghala
 - File dengan cabang `ja`: 172.
 - File tanpa terjemahan yang terdeteksi: 0.
 - File dengan objek yang tidak terbaca: 0.
-- Ekstraksi angka: 2602 mismatch dengan ekstraktor digit lama; 417 mismatch dengan pembanding sebelum diagnosis; 567 setelah perbaikan parser; 381 setelah klasifikasi. 2106 mismatch digit lama tidak lagi terdeteksi; 71 mismatch baru terungkap.
+- Ekstraksi angka: 2602 mismatch dengan ekstraktor digit lama; 416 mismatch dengan pembanding sebelum diagnosis; 565 setelah perbaikan parser; 380 setelah klasifikasi. 2108 mismatch digit lama tidak lagi terdeteksi; 71 mismatch baru terungkap.
 - Selain selisih yang diklasifikasikan, 315 pasangan angka bernilai sama hanya berbeda format. Adaptasi mata uang memakai pasangan Rp/$ dengan nilai sama atau skala nominal 1.000:1; adaptasi-skala memakai faktor pangkat 10 yang konsisten pada seluruh angka di key.
 - Label jenjang seperti Kelas 7 / Grade 7 / 中学1年 diabaikan pada perbandingan angka karena penomoran jenjang berbeda menurut bahasa.
 
@@ -33,8 +33,8 @@ Pemeriksaan membaca objek locale statis; spread atau key komputasi yang menghala
 
 | Perbandingan | Mismatch numeric | Hilang | Baru terungkap |
 | --- | ---: | ---: | ---: |
-| Ekstraktor digit lama → parser saat ini | 2602 → 567 | 2106 | 71 |
-| Pembanding sebelum diagnosis → sesudah diagnosis | 417 → 567 | 88 | 238 |
+| Ekstraktor digit lama → parser saat ini | 2602 → 565 | 2108 | 71 |
+| Pembanding sebelum diagnosis → sesudah diagnosis | 416 → 565 | 89 | 238 |
 
 ### Jumlah ketidaksesuaian per jenis (seluruh file)
 
@@ -42,20 +42,20 @@ Pemeriksaan membaca objek locale statis; spread atau key komputasi yang menghala
 | --- | ---: | --- |
 | format-saja | 315 | Tidak |
 | adaptasi-mata-uang | 154 | Tidak |
-| adaptasi-skala | 28 | Tidak |
+| adaptasi-skala | 27 | Tidak |
 | adaptasi-nama-konteks | 4 | Tidak |
 | label | 0 | Tidak |
-| nilai-beda | 381 | Ya |
+| nilai-beda | 380 | Ya |
 | ambigu-pemisah | 0 | Ya |
-| **Mismatch numeric sebelum pengecualian adaptasi** | **567** | Ya |
-| **Mismatch numeric setelah klasifikasi** | **381** | **381** |
+| **Mismatch numeric sebelum pengecualian adaptasi** | **565** | Ya |
+| **Mismatch numeric setelah klasifikasi** | **380** | **380** |
 | (a) Key ada di id tetapi tidak ada di locale lain | 8 | Ya |
 | (b) Key ada di locale lain tetapi tidak ada di id | 1 | Ya |
 | (c) Panjang array berbeda | 1 | Ya |
 | **Mismatch struktural** | **10** | Ya |
-| **Total mismatch terlapor** | **391** | **391** |
+| **Total mismatch terlapor** | **390** | **390** |
 
-Rekonsiliasi: 567 = 154 adaptasi mata uang + 28 adaptasi-skala + 4 adaptasi nama/konteks + 0 label + 381 nilai-beda + 0 ambigu-pemisah. Jumlah kelas tersebut sama dengan total mismatch numerik sebelum klasifikasi. Setelah 186 adaptasi dikecualikan, tersisa 381 mismatch numerik (381 nilai-beda + 0 ambigu-pemisah); 315 pasangan format-saja bernilai sama dan tidak masuk hitungan mismatch. Ditambah 10 mismatch struktural, totalnya 391.
+Rekonsiliasi: 565 = 154 adaptasi mata uang + 27 adaptasi-skala + 4 adaptasi nama/konteks + 0 label + 380 nilai-beda + 0 ambigu-pemisah. Jumlah kelas tersebut sama dengan total mismatch numerik sebelum klasifikasi. Setelah 185 adaptasi dikecualikan, tersisa 380 mismatch numerik (380 nilai-beda + 0 ambigu-pemisah); 315 pasangan format-saja bernilai sama dan tidak masuk hitungan mismatch. Ditambah 10 mismatch struktural, totalnya 390.
 
 ### Uji hipotesis false positive
 
@@ -78,7 +78,6 @@ Diurutkan menurut nilai absolut maksimum pada himpunan angka hasil parse id dan 
 | --- | ---: | --- | --- | --- | --- | ---: |
 | [`../artifacts/numatik/src/pages/buku-animasi-matematika/aritmetika-sosial/PPhPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/aritmetika-sosial/PPhPage.tsx) | 119 | `tarifTable[].pkp` | ja | [500] | [500000000] | 500000000 |
 | [`../artifacts/numatik/src/pages/buku-animasi-matematika/statistika/MedianModusPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/statistika/MedianModusPage.tsx) | 987 | `compareText` | ja | [100, 23, 3, 4, 5] | [100000000, 23000000, 3000000, 4000000, 5, 5000000] | 100000000 |
-| [`../artifacts/numatik/src/pages/buku-animasi-matematika/perbandingan/SkalaPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/perbandingan/SkalaPage.tsx) | 69 | `c3NoteB` | ja | [10000, 800, 8000000] | [10000, 800, 8000] | 8000000 |
 | [`../artifacts/numatik/src/pages/buku-animasi-matematika/aritmetika-sosial/BungaTunggalPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/aritmetika-sosial/BungaTunggalPage.tsx) | 136 | `quiz[].penjelasan` | en | [0.15, 1500000, 2, 5000000] | [0.15, 1500, 2, 5000] | 5000000 |
 | [`../artifacts/numatik/src/pages/buku-animasi-matematika/aritmetika-sosial/BungaTunggalPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/aritmetika-sosial/BungaTunggalPage.tsx) | 136 | `quiz[].penjelasan` | ja | [0.15, 1500000, 2, 5000000] | [0.15, 1500, 2, 5000] | 5000000 |
 | [`../artifacts/numatik/src/pages/buku-animasi-matematika/aritmetika-sosial/BungaTunggalPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/aritmetika-sosial/BungaTunggalPage.tsx) | 136 | `quiz[].soal` | en | [15, 2, 5000000] | [15, 2, 5000] | 5000000 |
@@ -86,6 +85,7 @@ Diurutkan menurut nilai absolut maksimum pada himpunan angka hasil parse id dan 
 | [`../artifacts/numatik/src/pages/buku-animasi-matematika/aritmetika-sosial/PPhPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/aritmetika-sosial/PPhPage.tsx) | 65 | `contoh[].maths[]` | en | [100, 3250000, 5000000, 65] | [0, 100, 250, 3, 5, 65] | 5000000 |
 | [`../artifacts/numatik/src/pages/buku-animasi-matematika/aritmetika-sosial/PPhPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/aritmetika-sosial/PPhPage.tsx) | 65 | `contoh[].maths[]` | ja | [100, 3250000, 5000000, 65] | [0, 100, 250, 3, 5, 65] | 5000000 |
 | [`../artifacts/numatik/src/pages/buku-animasi-matematika/aritmetika-sosial/BungaTunggalPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/aritmetika-sosial/BungaTunggalPage.tsx) | 111 | `soalContoh[].langkah[].isi` | en | [0.08, 2.5, 3600000] | [0.08, 2.5, 3600] | 3600000 |
+| [`../artifacts/numatik/src/pages/buku-animasi-matematika/aritmetika-sosial/BungaTunggalPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/aritmetika-sosial/BungaTunggalPage.tsx) | 111 | `soalContoh[].langkah[].isi` | ja | [0.08, 2.5, 3600000] | [0.08, 2.5, 3600] | 3600000 |
 
 
 ### Sampel acak merata: 30 kasus nilai-beda dari file berbeda
@@ -401,9 +401,8 @@ Klasifikasi numeric mismatch: token digit yang sama tetapi ditafsirkan berbeda m
 | [`../artifacts/numatik/src/pages/buku-animasi-matematika/perbandingan/SkalaPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/perbandingan/SkalaPage.tsx) | 61 | `c2Q` | ja | Jarak antara dua desa adalah 15 km. Pada sebuah denah wilayah, jarak keduanya digambar sepanjang 3 cm. (a) Tentukan skala denah tersebut! (b) Jika ada desa ketiga yang jaraknya 24 km dari desa pertama, berapa cm jaraknya di denah? | 2つの村の実際の距離は15kmです。地域の地図ではこの距離が3cmで描かれています。 (a) 地図の縮尺を求めなさい。 (b) 3番目の村が1番目の村から24km離れているとき、地図上では何cmですか？ | [15, 24, 3] | [1, 2, 3] |
 | [`../artifacts/numatik/src/pages/buku-animasi-matematika/perbandingan/SkalaPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/perbandingan/SkalaPage.tsx) | 65 | `c2ResultB` | ja | Jarak di denah = 4,8 cm | 地図上の距離 = 4.8cm | [4.8] | [4] |
 | [`../artifacts/numatik/src/pages/buku-animasi-matematika/perbandingan/SkalaPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/perbandingan/SkalaPage.tsx) | 63 | `c2UbahB` | ja | 24 km = 2.400.000 cm | 24km = 2,400,000cm | [24, 2400000] | [2400] |
-| [`../artifacts/numatik/src/pages/buku-animasi-matematika/perbandingan/SkalaPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/perbandingan/SkalaPage.tsx) | 67 | `c3Q` | ja | Sebuah denah lapangan olahraga menggunakan skala 1 : 1.000. Pada denah, luas lapangan tersebut adalah 12 cm². (a) Tentukan luas lapangan sebenarnya dalam m²! (b) Jika lapangan futsal di sebelahnya luasnya 800 m², berapa cm² luasnya di denah? | スポーツグラウンドの間取り図の縮尺は1：1,000です。図面上のグラウンドの面積は12cm²です。 (a) 実際のグラウンドの面積をm²で求めなさい。 (b) 隣接するフットサルコートの実際の面積が800m²のとき、図面上では何cm²ですか？ | [1, 1000, 12, 800] | [1, 1000] |
+| [`../artifacts/numatik/src/pages/buku-animasi-matematika/perbandingan/SkalaPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/perbandingan/SkalaPage.tsx) | 67 | `c3Q` | ja | Sebuah denah lapangan olahraga menggunakan skala 1 : 1.000. Pada denah, luas lapangan tersebut adalah 12 cm². (a) Tentukan luas lapangan sebenarnya dalam m²! (b) Jika lapangan futsal di sebelahnya luasnya 800 m², berapa cm² luasnya di denah? | スポーツグラウンドの間取り図の縮尺は1：1,000です。図面上のグラウンドの面積は12cm²です。 (a) 実際のグラウンドの面積をm²で求めなさい。 (b) 隣接するフットサルコートの実際の面積が800m²のとき、図面上では何cm²ですか？ | [1, 1000, 12, 800] | [1, 1000, 12] |
 | [`../artifacts/numatik/src/pages/buku-animasi-matematika/perbandingan/SkalaPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/perbandingan/SkalaPage.tsx) | 70 | `c3ResultA` | ja | Luas lapangan sebenarnya = 1.200 m² | 実際のグラウンド面積 = 1,200m² | [1200] | [1] |
-| [`../artifacts/numatik/src/pages/buku-animasi-matematika/perbandingan/SkalaPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/perbandingan/SkalaPage.tsx) | 40 | `luasExQ` | ja | Peta berskala 1:500. Luas taman di peta = 6 cm². Berapa luas sebenarnya? | 縮尺1:500の地図。地図上の公園の面積 = 6cm²。実際の面積は？ | [1, 500, 6] | [1, 500] |
 | [`../artifacts/numatik/src/pages/buku-animasi-matematika/perbandingan/SkalaPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/perbandingan/SkalaPage.tsx) | 33 | `readNote` | ja | Cara Baca Skala 1 : 500.000: Setiap 1 cm di peta = 500.000 cm (atau 5 km) di dunia nyata. Semakin besar angka di belakang titik dua, semakin kecil gambar dibanding aslinya. | 縮尺 1：500,000 の読み方：地図上の1cm = 実際の500,000cm（= 5km）。コロンの後の数字が大きいほど、図は実物より小さくなります。 | [1, 5, 500000] | [1, 500, 500000] |
 | [`../artifacts/numatik/src/pages/buku-animasi-matematika/persamaan-garis-lurus/GradienPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/persamaan-garis-lurus/GradienPage.tsx) | 87 | `c1_sb2` | ja | Baca dua titik ujung garis dari grafik: P(−3, −4) dan Q(1, 4), lalu substitusi ke rumus gradien: | グラフから2つの端点P(−3, −4)とQ(1, 4)を読み取り、傾きの公式に代入： | [-3, -4, 1, 4] | [-3, -4, 1, 2, 4] |
 | [`../artifacts/numatik/src/pages/buku-animasi-matematika/persamaan-garis-lurus/GradienPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/persamaan-garis-lurus/GradienPage.tsx) | 105 | `c4_ans` | ja | ✅ k = −2, sehingga P(−2, 0). Ketiga titik terletak pada garis y = x + 2 dengan gradien m = 1. | ✅ k = −2 なので P(−2, 0)。3点すべてが傾きm = 1の直線y = x + 2上にある。 | [-2, 0, 1, 2] | [-2, 0, 1, 2, 3] |
@@ -2114,10 +2113,8 @@ Bahasa: id, en, ja
 - **Angka berbeda pada `c2ResultB` (id vs ja; nilai-beda):** id=[4.8], ja=[4]
 - **Angka berbeda pada `c2UbahA` (id vs ja; adaptasi-skala):** id=[100000, 15, 1500000], ja=[100, 15, 1500]
 - **Angka berbeda pada `c2UbahB` (id vs ja; nilai-beda):** id=[24, 2400000], ja=[2400]
-- **Angka berbeda pada `c3NoteB` (id vs ja; adaptasi-skala):** id=[10000, 800, 8000000], ja=[10000, 800, 8000]
-- **Angka berbeda pada `c3Q` (id vs ja; nilai-beda):** id=[1, 1000, 12, 800], ja=[1, 1000]
+- **Angka berbeda pada `c3Q` (id vs ja; nilai-beda):** id=[1, 1000, 12, 800], ja=[1, 1000, 12]
 - **Angka berbeda pada `c3ResultA` (id vs ja; nilai-beda):** id=[1200], ja=[1]
-- **Angka berbeda pada `luasExQ` (id vs ja; nilai-beda):** id=[1, 500, 6], ja=[1, 500]
 - **Angka berbeda pada `readNote` (id vs ja; nilai-beda):** id=[1, 5, 500000], ja=[1, 500, 500000]
 
 
