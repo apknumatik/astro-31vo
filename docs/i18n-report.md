@@ -10,8 +10,8 @@ Pemeriksaan membaca objek locale statis; spread atau key komputasi yang menghala
 - File dengan cabang `ja`: 172.
 - File tanpa terjemahan yang terdeteksi: 0.
 - File dengan objek yang tidak terbaca: 0.
-- Ekstraksi angka: 2602 mismatch dengan ekstraktor digit lama; 416 mismatch dengan pembanding sebelum diagnosis; 565 setelah perbaikan parser; 380 setelah klasifikasi. 2108 mismatch digit lama tidak lagi terdeteksi; 71 mismatch baru terungkap.
-- Selain selisih yang diklasifikasikan, 315 pasangan angka bernilai sama hanya berbeda format. Adaptasi mata uang memakai pasangan Rp/$ dengan nilai sama atau skala nominal 1.000:1; adaptasi-skala memakai faktor pangkat 10 yang konsisten pada seluruh angka di key.
+- Ekstraksi angka: 2608 mismatch dengan ekstraktor digit lama; 428 mismatch dengan pembanding sebelum diagnosis; 576 setelah perbaikan parser; 384 setelah klasifikasi. 2103 mismatch digit lama tidak lagi terdeteksi; 71 mismatch baru terungkap.
+- Selain selisih yang diklasifikasikan, 309 pasangan angka bernilai sama hanya berbeda format. Adaptasi mata uang memakai pasangan Rp/$ dengan nilai sama atau skala nominal 1.000:1; adaptasi-skala memakai faktor pangkat 10 yang konsisten pada seluruh angka di key.
 - Label jenjang seperti Kelas 7 / Grade 7 / 中学1年 diabaikan pada perbandingan angka karena penomoran jenjang berbeda menurut bahasa.
 
 ### 10 file dengan ketidaksesuaian terbanyak
@@ -21,7 +21,7 @@ Pemeriksaan membaca objek locale statis; spread atau key komputasi yang menghala
 | [`../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PenjumlahanPenguranganBentukDesimalPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PenjumlahanPenguranganBentukDesimalPage.tsx) | 30 | 0 | 0 | 0 | 3 | 0 | 0 | 4 | 0 | 30 | 0 |
 | [`../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PembulatanBentukDesimalPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PembulatanBentukDesimalPage.tsx) | 27 | 0 | 0 | 0 | 18 | 0 | 0 | 0 | 0 | 27 | 0 |
 | [`../artifacts/numatik/src/pages/buku-animasi-matematika/kesebangunan-kekongruenan/KekongruenBangunDatarPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/kesebangunan-kekongruenan/KekongruenBangunDatarPage.tsx) | 26 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 26 | 0 |
-| [`../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PerkalianBentukDesimalPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PerkalianBentukDesimalPage.tsx) | 20 | 0 | 0 | 0 | 29 | 0 | 0 | 0 | 0 | 20 | 0 |
+| [`../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PerkalianBentukDesimalPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PerkalianBentukDesimalPage.tsx) | 24 | 0 | 0 | 0 | 23 | 3 | 4 | 0 | 0 | 24 | 0 |
 | [`../artifacts/numatik/src/pages/buku-animasi-matematika/himpunan/JenisHimpunanPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/himpunan/JenisHimpunanPage.tsx) | 12 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 12 | 0 |
 | [`../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PembagianBentukDesimalPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PembagianBentukDesimalPage.tsx) | 11 | 0 | 0 | 0 | 26 | 0 | 0 | 0 | 0 | 11 | 0 |
 | [`../artifacts/numatik/src/pages/buku-animasi-matematika/pola-bilangan/PolaGeometriPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/pola-bilangan/PolaGeometriPage.tsx) | 11 | 0 | 0 | 0 | 5 | 0 | 0 | 0 | 0 | 11 | 0 |
@@ -33,29 +33,29 @@ Pemeriksaan membaca objek locale statis; spread atau key komputasi yang menghala
 
 | Perbandingan | Mismatch numeric | Hilang | Baru terungkap |
 | --- | ---: | ---: | ---: |
-| Ekstraktor digit lama → parser saat ini | 2602 → 565 | 2108 | 71 |
-| Pembanding sebelum diagnosis → sesudah diagnosis | 416 → 565 | 89 | 238 |
+| Ekstraktor digit lama → parser saat ini | 2608 → 576 | 2103 | 71 |
+| Pembanding sebelum diagnosis → sesudah diagnosis | 428 → 576 | 90 | 238 |
 
 ### Jumlah ketidaksesuaian per jenis (seluruh file)
 
 | Jenis / total | Jumlah | Dihitung sebagai mismatch |
 | --- | ---: | --- |
-| format-saja | 315 | Tidak |
-| adaptasi-mata-uang | 154 | Tidak |
-| adaptasi-skala | 27 | Tidak |
+| format-saja | 309 | Tidak |
+| adaptasi-mata-uang | 157 | Tidak |
+| adaptasi-skala | 31 | Tidak |
 | adaptasi-nama-konteks | 4 | Tidak |
 | label | 0 | Tidak |
-| nilai-beda | 380 | Ya |
+| nilai-beda | 384 | Ya |
 | ambigu-pemisah | 0 | Ya |
-| **Mismatch numeric sebelum pengecualian adaptasi** | **565** | Ya |
-| **Mismatch numeric setelah klasifikasi** | **380** | **380** |
+| **Mismatch numeric sebelum pengecualian adaptasi** | **576** | Ya |
+| **Mismatch numeric setelah klasifikasi** | **384** | **384** |
 | (a) Key ada di id tetapi tidak ada di locale lain | 8 | Ya |
 | (b) Key ada di locale lain tetapi tidak ada di id | 1 | Ya |
 | (c) Panjang array berbeda | 1 | Ya |
 | **Mismatch struktural** | **10** | Ya |
-| **Total mismatch terlapor** | **390** | **390** |
+| **Total mismatch terlapor** | **394** | **394** |
 
-Rekonsiliasi: 565 = 154 adaptasi mata uang + 27 adaptasi-skala + 4 adaptasi nama/konteks + 0 label + 380 nilai-beda + 0 ambigu-pemisah. Jumlah kelas tersebut sama dengan total mismatch numerik sebelum klasifikasi. Setelah 185 adaptasi dikecualikan, tersisa 380 mismatch numerik (380 nilai-beda + 0 ambigu-pemisah); 315 pasangan format-saja bernilai sama dan tidak masuk hitungan mismatch. Ditambah 10 mismatch struktural, totalnya 390.
+Rekonsiliasi: 576 = 157 adaptasi mata uang + 31 adaptasi-skala + 4 adaptasi nama/konteks + 0 label + 384 nilai-beda + 0 ambigu-pemisah. Jumlah kelas tersebut sama dengan total mismatch numerik sebelum klasifikasi. Setelah 192 adaptasi dikecualikan, tersisa 384 mismatch numerik (384 nilai-beda + 0 ambigu-pemisah); 309 pasangan format-saja bernilai sama dan tidak masuk hitungan mismatch. Ditambah 10 mismatch struktural, totalnya 394.
 
 ### Uji hipotesis false positive
 
@@ -123,7 +123,7 @@ Pemilihan memakai seed tetap untuk hasil yang dapat direproduksi; satu kasus dip
 | [`../artifacts/numatik/src/pages/buku-animasi-matematika/spldv/PenyelesaianMasalahSPLDVPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/spldv/PenyelesaianMasalahSPLDVPage.tsx) | 92 | `q3L2Rel2` | Dari hubungan panjang-lebar: "panjang = 3 lebih dari dua kali lebar" | 縦横の関係：「長さ = 幅の2倍 + 3」 | -=U+002D, 3=U+0033 | 2=U+0032, +=U+002B, 3=U+0033 |
 | [`../artifacts/numatik/src/pages/buku-animasi-matematika/himpunan/OperasiHimpunanPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/himpunan/OperasiHimpunanPage.tsx) | 138 | `s4e1q` | S = {1,2,...,10}, A = {bilangan prima}. Tentukan Aᶜ! | S = {1,2,...,10}、A = {素数}。Aᶜ を求めなさい！ | 1=U+0031, ,=U+002C, 2=U+0032, .=U+002E, 0=U+0030 | 1=U+0031, ,=U+002C, 2=U+0032, .=U+002E, 0=U+0030, 。=U+3002 |
 | [`../artifacts/numatik/src/pages/buku-animasi-matematika/plsv-ptlsv/PengertianPtLSVPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/plsv-ptlsv/PengertianPtLSVPage.tsx) | 74 | `c3a` | "Dua kali suatu bilangan dikurangi 3 tidak lebih dari 11" | 「ある数の2倍から3を引いた値が11以下」 | 3=U+0033, 1=U+0031 | 2=U+0032, 3=U+0033, 1=U+0031 |
-| [`../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PerkalianBentukDesimalPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PerkalianBentukDesimalPage.tsx) | 74 | `ex5Q` | Hitunglah hasil perkalian 6,4 \times 1,38 | 計算せよ 6,4 \times 1,38 | 6=U+0036, ,=U+002C, 4=U+0034, 1=U+0031, 3=U+0033, 8=U+0038 | 6=U+0036, ,=U+002C, 4=U+0034, 1=U+0031, 3=U+0033, 8=U+0038 |
+| [`../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PerkalianBentukDesimalPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PerkalianBentukDesimalPage.tsx) | 98 | `ex7Q` | Sebuah toko menjual apel seharga Rp15.500 per kg. Berapakah harga yang harus dibayar jika membeli 2,5 kg apel? | あるお店でリンゴが1 kgあたり$15.50で売られています。2.5 kgのリンゴを買うといくらになりますか？ | 1=U+0031, 5=U+0035, .=U+002E, 0=U+0030, 2=U+0032, ,=U+002C | 1=U+0031, 5=U+0035, .=U+002E, 0=U+0030, 。=U+3002, 2=U+0032 |
 
 Klasifikasi numeric mismatch: token digit yang sama tetapi ditafsirkan berbeda menurut locale menjadi ambigu-pemisah; pasangan yang seluruh nilainya sama atau berubah secara konsisten dengan faktor 10, 100, 1.000, 10.000, atau 1.000.000 menjadi adaptasi-skala; label soal/langkah/figur yang bila dihapus menyamakan angka menjadi label; pasangan Rp/$ dengan rasio nominal 1.000:1 menjadi adaptasi-mata-uang; nama orang lokal/netral yang dikenali atau classifier jumlah Jepang yang tidak dinyatakan di id menjadi adaptasi-nama-konteks. Sisa perbedaan menjadi nilai-beda. Pasangan angka sama yang hanya berbeda separator dicatat sebagai format-saja.
 
@@ -255,6 +255,8 @@ Klasifikasi numeric mismatch: token digit yang sama tetapi ditafsirkan berbeda m
 | [`../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PerkalianBentukDesimalPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PerkalianBentukDesimalPage.tsx) | 40 | `ex2Q` | en | Hitunglah hasil perkalian 2,3467 \times 1000 | Calculate 2,3467 \times 1000 | [1000, 2.3467] | [1000, 2, 3467] |
 | [`../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PerkalianBentukDesimalPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PerkalianBentukDesimalPage.tsx) | 67 | `ex4Q` | en | Hitunglah hasil perkalian 0,25 \times 0,87 | Calculate 0,25 \times 0,87 | [0.25, 0.87] | [0, 25, 87] |
 | [`../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PerkalianBentukDesimalPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PerkalianBentukDesimalPage.tsx) | 74 | `ex5Q` | en | Hitunglah hasil perkalian 6,4 \times 1,38 | Calculate 6,4 \times 1,38 | [1.38, 6.4] | [1, 38, 4, 6] |
+| [`../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PerkalianBentukDesimalPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PerkalianBentukDesimalPage.tsx) | 102 | `ex7s2a` | en | 15.500 memiliki 0 tempat desimal | 15.50 has 2 decimal places | [0, 15500] | [15.5, 2] |
+| [`../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PerkalianBentukDesimalPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PerkalianBentukDesimalPage.tsx) | 105 | `ex7s2d` | en | Letakkan koma (1 angka dari kanan): 38.750,0 | Place the decimal point (3 digits from the right): 38.750 = 38.75 | [1, 38750] | [3, 38.75] |
 | [`../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PerkalianBentukDesimalPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PerkalianBentukDesimalPage.tsx) | 110 | `ex8katex1` | en | \text{Bensin} = \frac{350}{100} \times 8,5 = 3,5 \times 8,5 = 29,75 \text{ liter} | \text{Fuel} = \frac{350}{100} \times 8,5 = 3,5 \times 8,5 = 29,75 \text{ litres} | [100, 29.75, 3.5, 350, 8.5] | [100, 29, 3, 350, 5, 75, 8] |
 | [`../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PerkalianBentukDesimalPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PerkalianBentukDesimalPage.tsx) | 112 | `ex8katex2` | en | \text{Biaya} = 29,75 \times 12.650 | \text{Cost} = 29,75 \times 12{,}650 | [12650, 29.75] | [12650, 29, 75] |
 | [`../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PerkalianBentukDesimalPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PerkalianBentukDesimalPage.tsx) | 121 | `ex9katex1` | en | \text{Luas tanah} = 12,75 \times 8,4 = 107,1 \text{ m}^2 | \text{Land area} = 12,75 \times 8,4 = 107,1 \text{ m}^2 | [107.1, 12.75, 2, 8.4] | [1, 107, 12, 2, 4, 75, 8] |
@@ -264,7 +266,9 @@ Klasifikasi numeric mismatch: token digit yang sama tetapi ditafsirkan berbeda m
 | [`../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PerkalianBentukDesimalPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PerkalianBentukDesimalPage.tsx) | 46 | `ex3s2desc` | ja | Kita perlu menambah 1 angka nol di belakang: 8,65430 | 後ろに0を1つ追加する必要があります：8.65430 | [1, 8.6543] | [0, 1, 8.6543] |
 | [`../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PerkalianBentukDesimalPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PerkalianBentukDesimalPage.tsx) | 67 | `ex4Q` | ja | Hitunglah hasil perkalian 0,25 \times 0,87 | 計算せよ 0,25 \times 0,87 | [0.25, 0.87] | [0, 25, 87] |
 | [`../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PerkalianBentukDesimalPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PerkalianBentukDesimalPage.tsx) | 74 | `ex5Q` | ja | Hitunglah hasil perkalian 6,4 \times 1,38 | 計算せよ 6,4 \times 1,38 | [1.38, 6.4] | [1, 38, 4, 6] |
-| [`../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PerkalianBentukDesimalPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PerkalianBentukDesimalPage.tsx) | 98 | `ex7Q` | ja | Sebuah toko menjual apel seharga Rp15.500 per kg. Berapakah harga yang harus dibayar jika membeli 2,5 kg apel? | あるお店でリンゴが1 kgあたり$15,500で売られています。2.5 kgのリンゴを買うといくらになりますか？ | [15500, 2.5] | [1, 15500, 2.5] |
+| [`../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PerkalianBentukDesimalPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PerkalianBentukDesimalPage.tsx) | 98 | `ex7Q` | ja | Sebuah toko menjual apel seharga Rp15.500 per kg. Berapakah harga yang harus dibayar jika membeli 2,5 kg apel? | あるお店でリンゴが1 kgあたり$15.50で売られています。2.5 kgのリンゴを買うといくらになりますか？ | [15500, 2.5] | [1, 15.5, 2.5] |
+| [`../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PerkalianBentukDesimalPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PerkalianBentukDesimalPage.tsx) | 102 | `ex7s2a` | ja | 15.500 memiliki 0 tempat desimal | 15.50は小数2桁 | [0, 15500] | [15.5, 2] |
+| [`../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PerkalianBentukDesimalPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PerkalianBentukDesimalPage.tsx) | 105 | `ex7s2d` | ja | Letakkan koma (1 angka dari kanan): 38.750,0 | 小数点を配置（右から3桁）：38.750 = 38.75 | [1, 38750] | [3, 38.75] |
 | [`../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PerkalianBentukDesimalPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PerkalianBentukDesimalPage.tsx) | 108 | `ex8Q` | ja | Sebuah mobil mengonsumsi bensin 8,5 liter untuk menempuh jarak 100 km. Jika harga bensin Rp12.650 per liter, berapa biaya bensin untuk perjalanan sejauh 350 km? | ある車は100 kmを走るのに8.5リットルのガソリンを消費します。ガソリンが1リットル$12,650の場合、350 kmの旅行のガソリン代はいくらですか？ | [100, 12650, 350, 8.5] | [1, 100, 12650, 350, 8.5] |
 | [`../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PerkalianBentukDesimalPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PerkalianBentukDesimalPage.tsx) | 110 | `ex8katex1` | ja | \text{Bensin} = \frac{350}{100} \times 8,5 = 3,5 \times 8,5 = 29,75 \text{ liter} | \text{燃料} = \frac{350}{100} \times 8,5 = 3,5 \times 8,5 = 29,75 \text{ リットル} | [100, 29.75, 3.5, 350, 8.5] | [100, 29, 3, 350, 5, 75, 8] |
 | [`../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PerkalianBentukDesimalPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/bilangan-rasional/PerkalianBentukDesimalPage.tsx) | 112 | `ex8katex2` | ja | \text{Biaya} = 29,75 \times 12.650 | \text{費用} = 29,75 \times 12{,}650 | [12650, 29.75] | [12650, 29, 75] |
@@ -582,7 +586,7 @@ Nilai dipendekkan bila terlalu panjang. Hanya kelas nilai-beda dan ambigu-pemisa
 | `ex2Q` | Hitunglah hasil perkalian 2,3467 \times 1000 | Calculate 2,3467 \times 1000 | d — nilai-beda (id vs en) | beda nilai setelah normalisasi: id=[1000, 2.3467], en=[1000, 2, 3467] |
 | `ex4Q` | Hitunglah hasil perkalian 0,25 \times 0,87 | Calculate 0,25 \times 0,87 | d — nilai-beda (id vs en) | beda nilai setelah normalisasi: id=[0.25, 0.87], en=[0, 25, 87] |
 | `ex5Q` | Hitunglah hasil perkalian 6,4 \times 1,38 | Calculate 6,4 \times 1,38 | d — nilai-beda (id vs en) | beda nilai setelah normalisasi: id=[1.38, 6.4], en=[1, 38, 4, 6] |
-| `ex8katex1` | \text{Bensin} = \frac{350}{100} \times 8,5 = 3,5 \times 8,5 = 29,75 \text{ liter} | \text{Fuel} = \frac{350}{100} \times 8,5 = 3,5 \times 8,5 = 29,75 \text{ litres} | d — nilai-beda (id vs en) | beda nilai setelah normalisasi: id=[100, 29.75, 3.5, 350, 8.5], en=[100, 29, 3, 350, 5, 75, 8] |
+| `ex7Q` | Sebuah toko menjual apel seharga Rp15.500 per kg. Berapakah harga yang harus dibayar jika membeli 2,5 kg apel? | A shop sells apples for $15.50 per kg. How much must be paid for 2.5 kg of apples? | d — adaptasi-mata-uang (id vs en) | beda nilai setelah normalisasi: id=[15500, 2.5], en=[15.5, 2.5] |
 
 #### [`../artifacts/numatik/src/pages/buku-animasi-matematika/himpunan/JenisHimpunanPage.tsx`](../artifacts/numatik/src/pages/buku-animasi-matematika/himpunan/JenisHimpunanPage.tsx)
 
@@ -1548,6 +1552,12 @@ Bahasa: id, en, ja
 - **Angka berbeda pada `ex2Q` (id vs en; nilai-beda):** id=[1000, 2.3467], en=[1000, 2, 3467]
 - **Angka berbeda pada `ex4Q` (id vs en; nilai-beda):** id=[0.25, 0.87], en=[0, 25, 87]
 - **Angka berbeda pada `ex5Q` (id vs en; nilai-beda):** id=[1.38, 6.4], en=[1, 38, 4, 6]
+- **Angka berbeda pada `ex7Q` (id vs en; adaptasi-mata-uang):** id=[15500, 2.5], en=[15.5, 2.5]
+- **Angka berbeda pada `ex7ans` (id vs en; adaptasi-mata-uang):** id=[38750], en=[38.75]
+- **Angka berbeda pada `ex7katex1` (id vs en; adaptasi-skala):** id=[15500, 2.5], en=[15.5, 2.5]
+- **Angka berbeda pada `ex7s2a` (id vs en; nilai-beda):** id=[0, 15500], en=[15.5, 2]
+- **Angka berbeda pada `ex7s2c` (id vs en; adaptasi-skala):** id=[15500, 25, 387500], en=[1550, 25, 38750]
+- **Angka berbeda pada `ex7s2d` (id vs en; nilai-beda):** id=[1, 38750], en=[3, 38.75]
 - **Angka berbeda pada `ex8katex1` (id vs en; nilai-beda):** id=[100, 29.75, 3.5, 350, 8.5], en=[100, 29, 3, 350, 5, 75, 8]
 - **Angka berbeda pada `ex8katex2` (id vs en; nilai-beda):** id=[12650, 29.75], en=[12650, 29, 75]
 - **Angka berbeda pada `ex9katex1` (id vs en; nilai-beda):** id=[107.1, 12.75, 2, 8.4], en=[1, 107, 12, 2, 4, 75, 8]
@@ -1557,7 +1567,12 @@ Bahasa: id, en, ja
 - **Angka berbeda pada `ex3s2desc` (id vs ja; nilai-beda):** id=[1, 8.6543], ja=[0, 1, 8.6543]
 - **Angka berbeda pada `ex4Q` (id vs ja; nilai-beda):** id=[0.25, 0.87], ja=[0, 25, 87]
 - **Angka berbeda pada `ex5Q` (id vs ja; nilai-beda):** id=[1.38, 6.4], ja=[1, 38, 4, 6]
-- **Angka berbeda pada `ex7Q` (id vs ja; nilai-beda):** id=[15500, 2.5], ja=[1, 15500, 2.5]
+- **Angka berbeda pada `ex7Q` (id vs ja; nilai-beda):** id=[15500, 2.5], ja=[1, 15.5, 2.5]
+- **Angka berbeda pada `ex7ans` (id vs ja; adaptasi-mata-uang):** id=[38750], ja=[38.75]
+- **Angka berbeda pada `ex7katex1` (id vs ja; adaptasi-skala):** id=[15500, 2.5], ja=[15.5, 2.5]
+- **Angka berbeda pada `ex7s2a` (id vs ja; nilai-beda):** id=[0, 15500], ja=[15.5, 2]
+- **Angka berbeda pada `ex7s2c` (id vs ja; adaptasi-skala):** id=[15500, 25, 387500], ja=[1550, 25, 38750]
+- **Angka berbeda pada `ex7s2d` (id vs ja; nilai-beda):** id=[1, 38750], ja=[3, 38.75]
 - **Angka berbeda pada `ex8Q` (id vs ja; nilai-beda):** id=[100, 12650, 350, 8.5], ja=[1, 100, 12650, 350, 8.5]
 - **Angka berbeda pada `ex8katex1` (id vs ja; nilai-beda):** id=[100, 29.75, 3.5, 350, 8.5], ja=[100, 29, 3, 350, 5, 75, 8]
 - **Angka berbeda pada `ex8katex2` (id vs ja; nilai-beda):** id=[12650, 29.75], ja=[12650, 29, 75]
