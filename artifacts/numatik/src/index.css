@@ -211,6 +211,18 @@
   perspective: 900px;
 }
 
+.language-picker-panel {
+  max-height: 76dvh;
+  flex: 0 0 auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.language-picker-preview {
+  min-height: 0;
+}
+
 .future-language-option {
   min-height: 66px;
   transform: translateY(-3px) rotateX(1deg);

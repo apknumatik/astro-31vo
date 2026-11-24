@@ -610,7 +610,7 @@ const LanguagePickerModal = ({ open, onClose, instantEntrance = false }: Props) 
           initial={instantEntrance ? { opacity: 1 } : { opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.28 }}
+          transition={{ duration: instantEntrance ? 0 : 0.28 }}
           className="language-picker-root fixed inset-0 z-[90] flex flex-col"
         >
           {/* ── Top decorative area ── */}
@@ -716,7 +716,9 @@ const LanguagePickerModal = ({ open, onClose, instantEntrance = false }: Props) 
             initial={instantEntrance ? { y: 0, opacity: 1 } : { y: 80, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 80, opacity: 0 }}
-            transition={{ type: "spring", stiffness: 300, damping: 28, delay: 0.1 }}
+            transition={instantEntrance
+              ? { duration: 0 }
+              : { type: "spring", stiffness: 300, damping: 28, delay: 0.1 }}
             className={`language-picker-panel relative z-20 border-t shadow-2xl ${s.panelBg} ${s.panelBorder}`}
           >
             {/* Drag handle */}
