@@ -235,15 +235,15 @@ const translations = {
     usage4: "Currency conversion",
     sec3Tips: [] as string[],
 
-    ex7Q: "A shop sells apples for $15,500 per kg. How much must be paid for 2.5 kg of apples?",
+    ex7Q: "A shop sells apples for $15.50 per kg. How much must be paid for 2.5 kg of apples?",
     ex7s1: "Write the mathematical equation",
-    ex7katex1: "\\text{Total price} = 15,500 \\times 2.5",
+    ex7katex1: "\\text{Total price} = 15.50 \\times 2.5",
     ex7s2: "Calculate the multiplication",
-    ex7s2a: "15,500 has 0 decimal places",
+    ex7s2a: "15.50 has 2 decimal places",
     ex7s2b: "2.5 has 1 decimal place",
-    ex7s2c: "15500 × 25 = 387,500",
-    ex7s2d: "Place decimal (1 digit from right): 38,750.0",
-    ex7ans: <>The amount to be paid is <strong>$38,750</strong></>,
+    ex7s2c: "1550 × 25 = 38,750",
+    ex7s2d: "Place the decimal point (3 digits from the right): 38.750 = 38.75",
+    ex7ans: <>The amount to be paid is <strong>$38.75</strong></>,
 
     ex8Q: "A car uses 8.5 litres of petrol for 100 km. If petrol costs $12,650 per litre, what is the petrol cost for a 350 km journey?",
     ex8s1: "Calculate fuel needed for 350 km",
@@ -375,15 +375,15 @@ const translations = {
     usage4: "通貨換算",
     sec3Tips: [] as string[],
 
-    ex7Q: "あるお店でリンゴが1 kgあたり$15,500で売られています。2.5 kgのリンゴを買うといくらになりますか？",
+    ex7Q: "あるお店でリンゴが1 kgあたり$15.50で売られています。2.5 kgのリンゴを買うといくらになりますか？",
     ex7s1: "数式を書く",
-    ex7katex1: "\\text{合計金額} = 15,500 \\times 2.5",
+    ex7katex1: "\\text{合計金額} = 15.50 \\times 2.5",
     ex7s2: "掛け算を計算する",
-    ex7s2a: "15,500は小数0桁",
+    ex7s2a: "15.50は小数2桁",
     ex7s2b: "2.5は小数1桁",
-    ex7s2c: "15500 × 25 = 387,500",
-    ex7s2d: "小数点を配置（右から1桁）：38,750.0",
-    ex7ans: <>支払う金額は<strong>$38,750</strong>です。</>,
+    ex7s2c: "1550 × 25 = 38,750",
+    ex7s2d: "小数点を配置（右から3桁）：38.750 = 38.75",
+    ex7ans: <>支払う金額は<strong>$38.75</strong>です。</>,
 
     ex8Q: "ある車は100 kmを走るのに8.5リットルのガソリンを消費します。ガソリンが1リットル$12,650の場合、350 kmの旅行のガソリン代はいくらですか？",
     ex8s1: "350 kmに必要なガソリン量を計算する",
@@ -706,7 +706,7 @@ const PerkalianBentukDesimalPage = () => {
                   <div className="pl-4">
                     <p>{t.ex7s2a}</p>
                     <p>{t.ex7s2b}</p>
-                    <p><InlineMath math={language === "id" ? "15500 \\times 25 = 387.500" : "15500 \\times 25 = 387{,}500"} /></p>
+                    <p><InlineMath math={language === "id" ? "15500 \\times 25 = 387.500" : "1550 \\times 25 = 38{,}750"} /></p>
                     <p>{t.ex7s2d}</p>
                   </div>
                   <p className="text-cyan-300 mt-2"><strong>{t.answer}</strong> {t.ex7ans}</p>
