@@ -196,13 +196,14 @@ const ThemePickerModal = ({ open, onClose, onContinue }: Props) => {
 
   const handleContinue = () => {
     playPopSound();
+    if (onContinue) {
+      onContinue();
+      return;
+    }
+
     setConfirming(true);
     setTimeout(() => {
-      if (onContinue) {
-        onContinue();
-      } else {
-        navigate("/menu");
-      }
+      navigate("/menu");
     }, 350);
   };
 

@@ -25,8 +25,10 @@ const WelcomePage = () => {
   const [showWelcome, setShowWelcome] = useState(true);
   const [showThemePicker, setShowThemePicker] = useState(false);
   const [showLangPicker, setShowLangPicker] = useState(false);
+  const [instantLanguageTransition, setInstantLanguageTransition] = useState(false);
 
   const handleThemeContinue = useCallback(() => {
+    setInstantLanguageTransition(true);
     setShowThemePicker(false);
     setShowLangPicker(true);
   }, []);
@@ -38,6 +40,7 @@ const WelcomePage = () => {
 
   const handleStart = useCallback(() => {
     playPopSound();
+    setInstantLanguageTransition(false);
     setShowWelcome(false);
     setShowThemePicker(true);
   }, []);
@@ -89,6 +92,7 @@ const WelcomePage = () => {
       <LanguagePickerModal
         open={showLangPicker}
         onClose={handleLanguageClose}
+        instantEntrance={instantLanguageTransition}
       />
     </>
   );
