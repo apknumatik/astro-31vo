@@ -15,7 +15,7 @@ import Starfield, { StarfieldVisibilityContext } from "@/components/Starfield";
 import MenuHeaderControls from "@/components/MenuHeaderControls";
 import MenuSidebar from "@/components/MenuSidebar";
 import ExitDialog from "@/components/ExitDialog";
-import { MENU_ITEMS, MENU_SECTIONS, type MenuGroup, type MenuItemConfig } from "@/data/menuConfig";
+import { MENU_ITEMS, MENU_SECTIONS, type MenuItemConfig } from "@/data/menuConfig";
 import { MENU_ANNOUNCEMENTS } from "@/data/menuAnnouncements";
 import { playPopSound } from "@/hooks/useAudio";
 import { useResponsiveSidebarVisibility } from "@/hooks/useResponsiveSidebarVisibility";
@@ -78,10 +78,6 @@ function readRecentPaths(): string[] {
 
 function findMenuItem(path: string): MenuItemConfig | undefined {
   return MENU_ITEMS.find((item) => item.path === path);
-}
-
-function isHomeMenuItem(item: MenuItemConfig): boolean {
-  return item.key !== "ujiMandiri";
 }
 
 const MenuPage = () => {
@@ -212,7 +208,11 @@ const MenuPage = () => {
 
   const handleHomeClick = () => {
     setSearchQuery("");
+    document.getElementById("menu-mobile-main")?.scrollTo({ top: 0, behavior: "smooth" });
     document.getElementById("menu-desktop-content")?.scrollTo({ top: 0, behavior: "smooth" });
+    if (window.matchMedia("(max-width: 1023px), (hover: none)").matches) {
+      setIsSidebarVisible(false);
+    }
   };
 
   const renderRecentItems = () => recentItems.length > 0 && (
@@ -232,26 +232,6 @@ const MenuPage = () => {
       ))}
     </div>
   );
-
-  const renderCompactCard = (item: MenuItemConfig) => {
-    const Icon = item.icon;
-    return (
-      <button
-        key={item.path}
-        type="button"
-        onClick={() => handleOpenItem(item)}
-        aria-label={normalizeBrandName(t(`menuItems.${item.key}.label`))}
-        className="menu-card menu-focusable menu-compact-card"
-      >
-        <span className="menu-compact-icon-box">
-          <Icon aria-hidden="true" className="h-11 w-11" />
-        </span>
-        <span className="menu-compact-title" data-menu-key={item.key}>
-          {formatMenuLabel(t(`menu.${item.key}`))}
-        </span>
-      </button>
-    );
-  };
 
   const renderExpandedCard = (item: MenuItemConfig, desktop = false) => {
     const Icon = item.icon;
@@ -277,47 +257,53 @@ const MenuPage = () => {
     );
   };
 
-  const renderFeaturedCard = (item: MenuItemConfig, desktop = false) => {
-    const Icon = item.icon;
-    return (
-      <button
-        key={item.path}
-        type="button"
-        onClick={() => handleOpenItem(item)}
-        aria-label={normalizeBrandName(t(`menuItems.${item.key}.label`))}
-        className={`menu-card menu-focusable menu-featured-card${desktop ? " menu-featured-card-desktop" : ""}`}
-      >
-        <Icon aria-hidden="true" className="menu-featured-watermark" />
-        <span className="menu-featured-icon-box">
-          <Icon aria-hidden="true" />
-        </span>
-        <span className="menu-featured-title">
-          {formatMenuLabel(desktop ? t(`menuItems.${item.key}.label`) : t(`menu.${item.key}`))}
-        </span>
-        <span className="menu-card-description menu-featured-description">
-          {normalizeBrandName(t(`menuItems.${item.key}.desc`))}
-        </span>
-      </button>
-    );
-  };
-
-  const renderSection = (group: MenuGroup, mode: "compact" | "expanded", desktop = false) => {
-    const section = MENU_SECTIONS.find((candidate) => candidate.group === group);
-    if (!section) return null;
-    const items = MENU_ITEMS.filter((item) => item.group === group && !item.featured && isHomeMenuItem(item));
-    return (
-      <section
-        key={group}
-        id={desktop ? `menu-section-${group}` : `menu-mobile-section-${group}`}
-        className="menu-section"
-      >
-        <h2 className="menu-section-title">{t(section.labelKey)}</h2>
-        <div className={mode === "compact" ? "menu-compact-grid" : "menu-expanded-grid"}>
-          {items.map((item) => mode === "compact" ? renderCompactCard(item) : renderExpandedCard(item, desktop))}
-        </div>
-      </section>
-    );
-  };
+  const renderPrimaryMenu = () => (
+    <div className="menu-primary-home">
+      {MENU_SECTIONS.map((section) => {
+        const items = MENU_ITEMS.filter((item) => item.group === section.group);
+        return (
+          <section key={section.group} className="menu-primary-section">
+            <h2 className="menu-section-title">{t(section.labelKey)}</h2>
+            <div className="menu-app-grid">
+              {items.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <button
+                    key={item.path}
+                    type="button"
+                    onClick={() => handleOpenItem(item)}
+                    aria-label={normalizeBrandName(t(`menuItems.${item.key}.label`))}
+                    className="menu-card menu-focusable menu-app-card"
+                  >
+                    <span className="menu-app-icon">
+                      <Icon aria-hidden="true" />
+                    </span>
+                    <span className="menu-app-copy">
+                      <span className="menu-app-title">
+                        {item.key === "academic" ? (
+                          <span className="menu-academic-label">
+                            <span className="menu-academic-label-full">
+                              {formatMenuLabel(t(`menuItems.${item.key}.label`))}
+                            </span>
+                            <span className="menu-academic-label-short">
+                              {formatMenuLabel(t("menu.academic"))}
+                            </span>
+                          </span>
+                        ) : formatMenuLabel(t(`menuItems.${item.key}.label`))}
+                      </span>
+                      <span className="menu-app-description">
+                        {normalizeBrandName(t(`menuItems.${item.key}.desc`))}
+                      </span>
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+        );
+      })}
+    </div>
+  );
 
   const renderSearchResults = (desktop = false) => (
     <div className="menu-search-results">
@@ -371,49 +357,6 @@ const MenuPage = () => {
     </div>
   );
 
-  const renderMobileHome = () => (
-    <div className="menu-mobile-home">
-      <div className="menu-featured-grid">
-        {MENU_ITEMS.filter((item) => item.featured).map((item) => renderFeaturedCard(item))}
-      </div>
-      <div className="menu-mobile-sections">
-        {MENU_SECTIONS.map((section) => renderSection(section.group, "compact"))}
-      </div>
-    </div>
-  );
-
-  const renderDesktopHome = () => {
-    const sections = MENU_SECTIONS.map((section) => ({
-      ...section,
-      items: MENU_ITEMS.filter((item) => item.group === section.group && !item.featured && isHomeMenuItem(item)),
-    }));
-
-    return (
-      <>
-        <div className="menu-featured-grid menu-featured-grid-desktop">
-          {MENU_ITEMS.filter((item) => item.featured).map((item) => renderFeaturedCard(item, true))}
-        </div>
-        <div className="menu-desktop-sections">
-          {sections.map((section) => (
-            <h2
-              key={section.group}
-              id={`menu-section-${section.group}`}
-              className="menu-section-title"
-            >
-              {t(section.labelKey)}
-            </h2>
-          ))}
-          {Array.from({ length: 4 }, (_, row) => sections.map(({ group, items }) => {
-            const item = items[row];
-            return item
-              ? renderExpandedCard(item, true)
-              : <div key={`${group}-empty-${row}`} aria-hidden="true" />;
-          }))}
-        </div>
-      </>
-    );
-  };
-
   return (
     <div className="menu-page menu-app-root" data-tab-active={isPageVisible}>
       <StarfieldVisibilityContext.Provider value={isPageVisible}>
@@ -429,6 +372,7 @@ const MenuPage = () => {
           />
           <MenuSidebar
             onOpenItem={handleOpenItem}
+            onBrandClick={() => navigate("/")}
             onHomeClick={handleHomeClick}
             onToggleVisibility={() => setIsSidebarVisible(false)}
             isVisible
@@ -436,26 +380,26 @@ const MenuPage = () => {
         </div>
       )}
       <div className="menu-mobile-layout">
-        <header className="menu-mobile-header">
+        <header className={`menu-mobile-header${isSidebarVisible ? "" : " has-sidebar-trigger"}`}>
+          {!isSidebarVisible && (
+            <button
+              type="button"
+              onClick={() => setIsSidebarVisible(true)}
+              aria-label={t("menu.showSidebar")}
+              title={t("menu.showSidebar")}
+              aria-expanded={false}
+              className="menu-sidebar-toggle menu-mobile-sidebar-trigger menu-focusable"
+            >
+              <Menu aria-hidden="true" className="h-5 w-5" />
+            </button>
+          )}
           <div className="menu-brand menu-mobile-brand-row">
-            {!isSidebarVisible && (
-              <button
-                type="button"
-                onClick={() => setIsSidebarVisible(true)}
-                aria-label={t("menu.showSidebar")}
-                title={t("menu.showSidebar")}
-                aria-expanded={false}
-                className="menu-sidebar-toggle menu-mobile-sidebar-trigger menu-focusable"
-              >
-                <Menu aria-hidden="true" className="h-5 w-5" />
-              </button>
-            )}
             <div className="menu-mobile-brand-copy">
               <h1 className="menu-page-title menu-brand-title">
                 <button
                   type="button"
-                  onClick={handleHomeClick}
-                  aria-label={t("menu.homeTab")}
+                  onClick={() => navigate("/")}
+                  aria-label={t("nav.backToHome")}
                   className="menu-brand-home-button menu-focusable"
                 >
                   NUMATIK
@@ -478,7 +422,7 @@ const MenuPage = () => {
           </div>
         </header>
 
-        <main className="menu-mobile-main">
+        <main id="menu-mobile-main" className="menu-mobile-main">
           <div className="menu-search-box">
             <Search aria-hidden="true" className="menu-search-icon" />
             <label htmlFor="mobile-menu-search" className="sr-only">{t("menu.searchAriaLabel")}</label>
@@ -508,15 +452,16 @@ const MenuPage = () => {
           <div className={`menu-mobile-content${normalizedQuery ? " menu-mobile-search-content" : ""}`}>
             {normalizedQuery
               ? renderSearchResults()
-              : renderMobileHome()}
+              : renderPrimaryMenu()}
           </div>
         </main>
 
       </div>
 
-      <div className="menu-desktop-layout">
+      <div className={`menu-desktop-layout${isSidebarVisible ? "" : " is-sidebar-hidden"}`}>
         <MenuSidebar
           onOpenItem={handleOpenItem}
+          onBrandClick={() => navigate("/")}
           onHomeClick={handleHomeClick}
           onToggleVisibility={() => setIsSidebarVisible(false)}
           isVisible={isSidebarVisible}
@@ -568,7 +513,7 @@ const MenuPage = () => {
           <div id="menu-desktop-content" className={`menu-desktop-content${normalizedQuery ? " menu-desktop-search-content" : ""}`}>
             {normalizedQuery
               ? renderSearchResults(true)
-              : renderDesktopHome()}
+              : renderPrimaryMenu()}
           </div>
         </main>
       </div>

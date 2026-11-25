@@ -42,45 +42,6 @@ function detectLang(key: string): WelcomeLang {
   return ([q, store.get(key), dev, "id"].find((k) => k && k in L) as WelcomeLang) || "id";
 }
 
-/* ===== tekstur planet (noise SVG yang tersambung mulus), dibuat sekali di level modul ===== */
-const SV = (inner: string, defs: string) =>
-  'url("data:image/svg+xml,' +
-  encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='256' height='256'><defs>${defs}</defs>${inner}</svg>`) +
-  '")';
-function band(fx: number, fy: number, oct: number, seed: number, k: number, c: number, r: string, g: string, b: string) {
-  const m = `${k} 0 0 0 ${c} ${k} 0 0 0 ${c} ${k} 0 0 0 ${c} 0 0 0 0 1`;
-  return SV(
-    "<rect width='256' height='256' filter='url(#f)'/>",
-    `<filter id='f' x='0' y='0' width='100%' height='100%' color-interpolation-filters='sRGB'><feTurbulence type='fractalNoise' baseFrequency='${fx} ${fy}' numOctaves='${oct}' seed='${seed}' stitchTiles='stitch'/><feColorMatrix values='${m}'/><feComponentTransfer><feFuncR type='table' tableValues='${r}'/><feFuncG type='table' tableValues='${g}'/><feFuncB type='table' tableValues='${b}'/></feComponentTransfer></filter>`
-  );
-}
-const earthSurf = SV(
-  "<rect width='256' height='256' fill='url(#o)'/><rect width='256' height='256' filter='url(#l)'/>",
-  "<linearGradient id='o' x2='0' y2='1'><stop offset='0' stop-color='#e8f3ff'/><stop offset='.1' stop-color='#2f78d6'/><stop offset='.5' stop-color='#123f9c'/><stop offset='.9' stop-color='#2f78d6'/><stop offset='1' stop-color='#e8f3ff'/></linearGradient><filter id='l' x='0' y='0' width='100%' height='100%' color-interpolation-filters='sRGB'><feTurbulence type='fractalNoise' baseFrequency='.012 .02' numOctaves='5' seed='11' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .26 0 0 0 0 .5 0 0 0 0 .2 7 0 0 0 -3.3'/></filter>"
-);
-const clouds = SV(
-  "<rect width='256' height='256' filter='url(#c)'/>",
-  "<filter id='c' x='0' y='0' width='100%' height='100%' color-interpolation-filters='sRGB'><feTurbulence type='fractalNoise' baseFrequency='.018 .05' numOctaves='5' seed='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 3.2 0 0 0 -1.5'/></filter>"
-);
-const spot = SV(
-  "<ellipse cx='150' cy='170' rx='26' ry='15' fill='url(#g)'/>",
-  "<radialGradient id='g'><stop offset='0' stop-color='#a8321f'/><stop offset='.6' stop-color='#cf6a45'/><stop offset='1' stop-color='#cf6a45' stop-opacity='0'/></radialGradient>"
-);
-const TEX: Record<string, string> = {
-  mercury: band(0.05, 0.05, 5, 2, 2.2, -0.55, ".28 .55 .4 .72 .5", ".27 .53 .39 .7 .48", ".25 .5 .37 .66 .45"),
-  venus: band(0.012, 0.04, 4, 5, 2, -0.45, ".86 .96 .78 .94", ".66 .82 .56 .78", ".3 .46 .24 .42"),
-  earth: clouds + "," + earthSurf,
-  mars: band(0.02, 0.02, 5, 9, 2.4, -0.7, ".42 .8 .6 .86 .5", ".15 .33 .22 .4 .17", ".07 .15 .1 .2 .07"),
-  jupiter: spot + "," + band(0.003, 0.07, 4, 4, 2.6, -0.8, ".52 .88 .62 .95 .56 .84", ".32 .67 .42 .85 .36 .62", ".2 .45 .27 .7 .22 .42"),
-  saturn: band(0.002, 0.09, 3, 6, 2.6, -0.8, ".74 .93 .68 .9 .6", ".62 .82 .56 .76 .5", ".4 .55 .34 .5 .3"),
-  uranus: band(0.004, 0.03, 2, 8, 1.5, -0.2, ".6 .72 .66", ".84 .94 .88", ".9 .97 .93"),
-  neptune: band(0.004, 0.05, 3, 3, 1.8, -0.4, ".1 .22 .12", ".22 .4 .3", ".66 .92 .72"),
-};
-const RINGS = [
-  { k: "mercury", r: 22, t: 8, d: -3 }, { k: "venus", r: 31, t: 14, d: -9 }, { k: "earth", r: 40, t: 22, d: -6 },
-  { k: "mars", r: 49, t: 30, d: -20 }, { k: "belt", r: 56, t: 90, d: 0 }, { k: "jupiter", r: 67, t: 48, d: -14 },
-  { k: "saturn", r: 79, t: 66, d: -40 }, { k: "uranus", r: 89, t: 90, d: -30 }, { k: "neptune", r: 99, t: 120, d: -70 },
-];
 const SYMBOLS = ["π", "√", "∑", "∞", "△", "□", "∠", "÷", "×", "%", "≈", "x²", "∫", "θ"];
 
 export interface NumatikWelcomeProps {
@@ -284,25 +245,7 @@ export default function NumatikWelcome({
           </div>
 
           <div className="space" aria-hidden="true">
-            <div className="scene">
-              {RINGS.map((rg) =>
-                rg.k === "belt" ? (
-                  <div key={rg.k} className="ring belt" style={S({ "--r": rg.r + "%" })}>
-                    <div className="spin" style={S({ "--t": rg.t + "s" })} />
-                  </div>
-                ) : (
-                  <div key={rg.k} className="ring" style={S({ "--r": rg.r + "%" })}>
-                    <div className="spin" style={S({ "--t": rg.t + "s", "--d": rg.d + "s" })}>
-                      <span className={"pl " + rg.k} style={S({ "--tex": TEX[rg.k] })}>
-                        <i className="bd"><b className="gl" /></i>
-                        {rg.k === "earth" && <b className="moonorb" />}
-                      </span>
-                    </div>
-                  </div>
-                )
-              )}
-              <div className="sun"><i /></div>
-            </div>
+            <img className="sun-image" src="/sun.png" alt="" />
           </div>
         </section>
 

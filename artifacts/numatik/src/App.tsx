@@ -1089,6 +1089,7 @@ const AppInner = () => {
           <>
             <MenuSidebar
               activePath={activeMenuItem.path}
+              onBrandClick={() => navigate("/")}
               onHomeClick={() => navigate("/menu")}
               onToggleVisibility={() => setIsSidebarVisible(false)}
               isVisible={isSidebarVisible}

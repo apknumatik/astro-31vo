@@ -1,10 +1,11 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Heart, Menu } from "lucide-react";
+import { Heart, Home, Menu } from "lucide-react";
 import { MENU_ITEMS, type MenuItemConfig } from "@/data/menuConfig";
 
 type MenuSidebarProps = {
   activePath?: string;
+  onBrandClick: () => void;
   onHomeClick: () => void;
   onOpenItem?: (item: MenuItemConfig) => void;
   onToggleVisibility?: () => void;
@@ -21,6 +22,7 @@ const normalizeMenuLabel = (label: string, language: string) => {
 
 const MenuSidebar = ({
   activePath,
+  onBrandClick,
   onHomeClick,
   onOpenItem,
   onToggleVisibility,
@@ -37,8 +39,8 @@ const MenuSidebar = ({
           <h1 className="menu-page-title menu-brand-title">
             <button
               type="button"
-              onClick={onHomeClick}
-              aria-label={t("menu.homeTab")}
+              onClick={onBrandClick}
+              aria-label={t("nav.backToHome")}
               className="menu-brand-home-button menu-focusable"
             >
               NUMATIK
@@ -61,6 +63,16 @@ const MenuSidebar = ({
       </div>
 
       <nav className="menu-sidebar-primary" aria-label={t("menu.moreTab")}>
+        <button
+          type="button"
+          onClick={onHomeClick}
+          aria-current={location.pathname === "/menu" ? "page" : undefined}
+          aria-label={t("menu.homeTab")}
+          className="menu-sidebar-link menu-focusable"
+        >
+          <Home aria-hidden="true" className="h-5 w-5 shrink-0" />
+          <span>{t("menu.homeTab")}</span>
+        </button>
         {MENU_ITEMS.filter((item) => item.group === "more" && item.key !== "donate").map((item) => {
           const ItemIcon = item.icon;
           const isActive = activePath === item.path || location.pathname === item.path;
