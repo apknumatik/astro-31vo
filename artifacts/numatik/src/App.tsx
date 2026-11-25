@@ -285,7 +285,7 @@ const NumatikMetropolisPage = lazy(() => import("./games/numatik-metropolis/Numa
 const NumatikCityRiderPage = lazy(() => import("./pages/ruang-untuk-guru/NumatikCityRiderPage"));
 const NumatikKartPage = lazy(() => import("./pages/ruang-untuk-guru/NumatikKartPage"));
 const NumatikRunnerPage = lazy(() => import("./games/numatik-runner/NumatikRunnerPage"));
-const ObbyMatematikaPage = lazy(() => import("./games/obby-matematika/ObbyPage"));
+const ObbyNumatik3DPage = lazy(() => import("./games/obby-numatik-3d/ObbyNumatik3DPage"));
 const NumatikStrikeGamePage = lazy(() => import("./pages/numatik-gamez/umum/GamePage"));
 const NumatikWorldPage = lazy(() => import("./pages/numatik-gamez/umum/NumatikWorldPage"));
 const KeyakinanKelasPage = lazy(() => import("./pages/ruang-untuk-guru/KeyakinanKelasPage"));
@@ -1084,6 +1084,7 @@ const AppInner = () => {
           /^\/buku-animasi-matematika\/kelas-[789](?:\/.*)?$/.test(pathname) ? "animation-submaterial-route" : "",
           pathname.startsWith("/tugas-latihan-mandiri") ? "tugas-latihan-mandiri-route" : "",
           activeMenuItem ? "menu-route-layout" : "",
+          activeMenuItem && isSidebarVisible ? "menu-sidebar-visible" : "",
         ].filter(Boolean).join(" ") || undefined}>
         {activeMenuItem && (
           <>
@@ -1520,7 +1521,7 @@ const AppInner = () => {
             <Route path="/ruang-untuk-guru/numatik-game/city-ride" element={<NumatikCityRiderPage />} />
             <Route path="/ruang-untuk-guru/numatik-game/kart" element={<NumatikKartPage />} />
             <Route path="/game/numatik-runner" element={<NumatikRunnerPage />} />
-            <Route path="/game/obby-matematika" element={<ObbyMatematikaPage />} />
+            <Route path="/game/obby-numatik-3d" element={<ObbyNumatik3DPage />} />
             <Route path="/numatik-gamez/umum/numatik-strike" element={<NumatikStrikeGamePage />} />
             <Route path="/numatik-gamez/umum/numatik-world" element={<NumatikWorldPage />} />
             <Route path="/ruang-untuk-guru/keyakinan-kelas" element={<KeyakinanKelasPage />} />

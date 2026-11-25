@@ -31,10 +31,10 @@ const games = [
     icon: <Zap className="w-7 h-7 text-cyan-300 shrink-0 group-hover:scale-110 transition-transform" />,
   },
   {
-    label: "OBBY MATEMATIKA 3D",
+    label: "OBBY NUMATIK 3D",
     emoji: "🏁",
-    path: "/game/obby-matematika",
-    desc: "Selesaikan lintasan parkour lima zona, lewati persimpangan soal, dan raih garis finis!",
+    path: "/game/obby-numatik-3d",
+    desc: "Pilih satu dari enam tempat, lewati rintangan dan persimpangan soal, lalu raih garis finis!",
     icon: <Flag className="w-7 h-7 text-emerald-300 shrink-0 group-hover:scale-110 transition-transform" />,
   },
   {
@@ -189,7 +189,7 @@ const NumatikGamePage = () => {
             const isKart = game.path.endsWith("/numatik-game/kart");
             const isCity = game.path.endsWith("/numatik-metropolis") || game.path.endsWith("/city-ride");
             const isRunner = game.path.endsWith("/numatik-runner");
-            const isObby = game.path.endsWith("/obby-matematika");
+            const isObby = game.path.endsWith("/obby-numatik-3d");
             const is3dGame = isStrike || isWorld || isKart || isCity || isRunner || isObby;
             return (
             <button

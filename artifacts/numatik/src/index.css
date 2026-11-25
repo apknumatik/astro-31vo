@@ -2138,7 +2138,8 @@
   .menu-route-content {
     height: 100%;
     min-height: 0;
-    flex: 1 1 auto;
+    width: 0;
+    flex: 1 1 0%;
     overflow: auto;
   }
 
@@ -2148,6 +2149,10 @@
 
   .menu-route-layout > .menu-sidebar {
     display: flex;
+  }
+
+  .menu-route-layout.menu-sidebar-visible .page-navigation-bottom {
+    left: 210px;
   }
 
   .menu-mobile-layout {
@@ -7948,4 +7953,87 @@ html.light-mode .pola-geometri-materi-route .katex {
     inset 0 1px 0 rgba(255,255,255,0.6),
     0 2px 0 #166534,
     0 5px 12px rgba(22,163,74,0.2);
+}
+
+/* Dark utility panels not covered by the legacy light-theme opacity variants.
+   Keep SVG labels readable when their surrounding panel is brightened too. */
+html.light-mode [class~="bg-slate-950"]:not(.game-quiz-panel *),
+html.light-mode [class~="bg-slate-950/20"]:not(.game-quiz-panel *),
+html.light-mode [class~="bg-slate-950/25"]:not(.game-quiz-panel *),
+html.light-mode [class~="bg-slate-950/30"]:not(.game-quiz-panel *),
+html.light-mode [class~="bg-slate-950/35"]:not(.game-quiz-panel *),
+html.light-mode [class~="bg-slate-950/40"]:not(.game-quiz-panel *),
+html.light-mode [class~="bg-slate-950/45"]:not(.game-quiz-panel *),
+html.light-mode [class~="bg-slate-950/50"]:not(.game-quiz-panel *),
+html.light-mode [class~="bg-slate-950/55"]:not(.game-quiz-panel *),
+html.light-mode [class~="bg-slate-950/60"]:not(.game-quiz-panel *),
+html.light-mode [class~="bg-slate-950/65"]:not(.game-quiz-panel *),
+html.light-mode [class~="bg-slate-950/70"]:not(.game-quiz-panel *),
+html.light-mode [class~="bg-slate-950/75"]:not(.game-quiz-panel *),
+html.light-mode [class~="bg-slate-950/85"]:not(.game-quiz-panel *),
+html.light-mode [class~="bg-slate-950/90"]:not(.game-quiz-panel *),
+html.light-mode [class~="bg-slate-950/95"]:not(.game-quiz-panel *),
+html.light-mode [class~="bg-slate-900/25"]:not(.game-quiz-panel *),
+html.light-mode [class~="bg-slate-900/55"]:not(.game-quiz-panel *),
+html.light-mode [class~="bg-slate-900/65"]:not(.game-quiz-panel *),
+html.light-mode [class~="bg-slate-900/75"]:not(.game-quiz-panel *),
+html.light-mode [class~="bg-slate-900/95"]:not(.game-quiz-panel *),
+html.light-mode [class~="bg-black"]:not(.game-quiz-panel *),
+html.light-mode [class~="bg-black/35"]:not(.game-quiz-panel *),
+html.light-mode [class~="bg-black/65"]:not(.game-quiz-panel *),
+html.light-mode [class~="bg-black/72"]:not(.game-quiz-panel *),
+html.light-mode [class~="bg-black/75"]:not(.game-quiz-panel *),
+html.light-mode [class~="bg-black/85"]:not(.game-quiz-panel *) {
+  background-color: rgba(248,250,252,0.94) !important;
+}
+
+html.light-mode [class*="bg-slate-950"] svg text[fill="white"]:not(.game-quiz-panel *),
+html.light-mode [class*="bg-slate-950"] svg text[fill="#fff"]:not(.game-quiz-panel *),
+html.light-mode [class*="bg-slate-950"] svg text[fill="#ffffff"]:not(.game-quiz-panel *),
+html.light-mode [class*="bg-slate-900"] svg text[fill="white"]:not(.game-quiz-panel *),
+html.light-mode [class*="bg-slate-900"] svg text[fill="#fff"]:not(.game-quiz-panel *),
+html.light-mode [class*="bg-slate-900"] svg text[fill="#ffffff"]:not(.game-quiz-panel *) {
+  fill: #0f172a !important;
+}
+
+/* SVG diagram and animation labels should use a consistent dark ink in bright
+   themes; preserve the intentionally light labels on dark quiz and space UI. */
+html.light-mode svg text:not(.game-quiz-panel *):not(.nmw *),
+html.light-mode svg text tspan:not(.game-quiz-panel *):not(.nmw *) {
+  fill: #1e293b !important;
+  color: #1e293b !important;
+}
+
+/* Some diagrams hardcode their canvas color in the first SVG rectangle,
+   bypassing the light-theme background utility overrides. */
+html[data-theme="pastel"] svg > rect:first-of-type:is(
+  [fill="#020617"],
+  [fill="#020d1a"],
+  [fill="#0b1733"],
+  [fill="#0f172a"],
+  [fill="#111827"],
+  [fill="#1e293b"]
+) {
+  fill: var(--bg-card) !important;
+  fill-opacity: 1 !important;
+  opacity: 1 !important;
+}
+
+html[data-theme="pastel"] .theme-venn-box [fill="#0f172a"] {
+  fill: var(--bg-card) !important;
+  fill-opacity: 1 !important;
+  opacity: 1 !important;
+}
+
+:is([data-theme="light"], [data-theme="forest"], [data-theme="sunset"], [data-theme="pastel"])
+  .numatik-game-submaterial-chooser > .fixed > button {
+  color: #334155 !important;
+  background-color: rgba(255,255,255,0.96) !important;
+  border-color: #cbd5e1 !important;
+}
+
+:is([data-theme="light"], [data-theme="forest"], [data-theme="sunset"], [data-theme="pastel"])
+  .numatik-game-submaterial-chooser > .fixed > button:hover {
+  background-color: #ecfeff !important;
+  border-color: #67e8f9 !important;
 }

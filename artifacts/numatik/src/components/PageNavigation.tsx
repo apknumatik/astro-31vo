@@ -27,7 +27,7 @@ const PageNavigation = ({ prevPath, nextPath, hidden = false }: PageNavigationPr
   return (
     <>
       <div
-        className="fixed left-0 bottom-0 z-50 flex gap-2 p-4"
+        className="page-navigation-bottom fixed left-0 bottom-0 z-50 flex gap-2 p-4"
         style={{
           paddingLeft: "max(1rem, env(safe-area-inset-left, 0px))",
           paddingBottom: "max(1rem, env(safe-area-inset-bottom, 0px))",

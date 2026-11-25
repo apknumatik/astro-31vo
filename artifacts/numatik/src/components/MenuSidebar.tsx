@@ -73,7 +73,7 @@ const MenuSidebar = ({
           <Home aria-hidden="true" className="h-5 w-5 shrink-0" />
           <span>{t("menu.homeTab")}</span>
         </button>
-        {MENU_ITEMS.filter((item) => item.group === "more" && item.key !== "donate").map((item) => {
+        {MENU_ITEMS.filter((item) => item.group === "more" && item.key !== "donate" && item.key !== "settings").map((item) => {
           const ItemIcon = item.icon;
           const isActive = activePath === item.path || location.pathname === item.path;
           return (
