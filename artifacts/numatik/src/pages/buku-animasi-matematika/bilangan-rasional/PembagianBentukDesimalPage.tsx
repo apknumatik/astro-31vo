@@ -629,7 +629,7 @@ const PembagianBentukDesimalPage = () => {
             </div>
             <div className="bg-slate-700/50 border border-slate-600 rounded-lg p-4">
               <h4 className="text-slate-300 font-semibold text-sm mb-3">{t.sec3UsageTitle}</h4>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+              <div className="grid grid-cols-1 desktop:grid-cols-3 phone-land:grid-cols-2 gap-3 text-sm">
                 <div className="bg-black/30 rounded p-3 text-center">
                   <span className="text-2xl mb-2 block">🛒</span>
                   <p className="text-cyan-300">{t.usage1}</p>

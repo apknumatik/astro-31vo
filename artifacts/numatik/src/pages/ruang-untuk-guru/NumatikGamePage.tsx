@@ -182,7 +182,7 @@ const NumatikGamePage = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mb-10">
+        <div className="grid grid-cols-2 sm:grid-cols-3 desktop:grid-cols-4 phone-land:grid-cols-2 gap-3 mb-10">
           {games.map((game, i) => {
             const isStrike = game.path.endsWith("/numatik-strike");
             const isWorld = game.path.endsWith("/numatik-world");

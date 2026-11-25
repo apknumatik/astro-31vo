@@ -55,6 +55,8 @@
     "matchingMenuItems": "該当するメニュー",
     "lastOpened": "最近開いた項目",
     "homeTab": "ホーム",
+    "hideSidebar": "サイドバーを隠す",
+    "showSidebar": "サイドバーを表示",
     "learnTab": "学習",
     "practiceTab": "練習",
     "gamesTab": "ゲーム",

@@ -1,3 +1,7 @@
 {
-  "learningWelcome": "Selamat belajar!"
+  "learningWelcome": "Selamat belajar!",
+  "menu": {
+    "hideSidebar": "Sembunyikan menu sisi",
+    "showSidebar": "Paparkan menu sisi"
+  }
 }

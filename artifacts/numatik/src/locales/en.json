@@ -55,6 +55,8 @@
     "matchingMenuItems": "Matching menu items",
     "lastOpened": "Recently opened",
     "homeTab": "Home",
+    "hideSidebar": "Hide sidebar",
+    "showSidebar": "Show sidebar",
     "learnTab": "Learn",
     "practiceTab": "Practice",
     "gamesTab": "Games",
