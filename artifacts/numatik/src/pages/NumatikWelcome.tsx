@@ -14,19 +14,79 @@
  * Semua CSS di-scope ke .nmw sehingga tidak mengubah gaya halaman lain.
  */
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { normalizeLanguage } from "@/lib/pickLang";
+import type { Language } from "@/contexts/LanguageContext";
 import "./numatik-welcome.css";
 
-export type WelcomeLang = "id" | "en" | "ms" | "ja" | "zh" | "ru";
-type Dict = { n: string; g: string; s: string; y: string; b: string; h: string; t: string };
+export type WelcomeLang = Language;
+type Dict = {
+  n: string;
+  g: string;
+  s: string;
+  y: string;
+  b: string;
+  h: string;
+  t: string;
+  languageNavLabel: string;
+  languageButtonLabel: string;
+  soundOnLabel: string;
+  soundOffLabel: string;
+  closeLabel: string;
+  replayLabel: string;
+};
 
-// Terjemahan ms/zh/ru masih DRAF dan perlu direview penutur asli.
 const L: Record<WelcomeLang, Dict> = {
-  id: { n: "ID", g: "Selamat Datang di Aplikasi", s: "Numerasi Aktif dengan Teknologi Informasi dan Komunikasi", y: "Tahun Ajaran {y}", b: "MULAI", h: "Selamat belajar!", t: "APLIKASI MULTIMEDIA PEMBELAJARAN INTERAKTIF MATEMATIKA" },
-  en: { n: "EN", g: "Welcome to the App", s: "Active Numeracy with Information and Communication Technology", y: "Academic Year {y}", b: "START", h: "Happy learning!", t: "INTERACTIVE MULTIMEDIA LEARNING APP FOR JUNIOR HIGH MATHEMATICS" },
-  ms: { n: "MS", g: "Selamat Datang ke Aplikasi", s: "Numerasi Aktif dengan Teknologi Maklumat dan Komunikasi", y: "Tahun Akademik {y}", b: "MULA", h: "Selamat belajar!", t: "APLIKASI MULTIMEDIA PEMBELAJARAN INTERAKTIF MATEMATIK SEKOLAH MENENGAH" },
-  ja: { n: "日本語", g: "アプリへようこそ", s: "情報通信技術で学ぶアクティブ・ニューメラシー", y: "{y}年度", b: "スタート", h: "いっしょに学ぼう！", t: "中学数学のインタラクティブ・マルチメディア学習アプリ" },
-  zh: { n: "中文", g: "欢迎使用应用", s: "借助信息通信技术的主动数感学习", y: "{y} 学年", b: "开始", h: "开始学习吧！", t: "初中数学互动多媒体学习应用" },
-  ru: { n: "RU", g: "Добро пожаловать в приложение", s: "Активная математическая грамотность с помощью ИКТ", y: "{y} учебный год", b: "НАЧАТЬ", h: "Учимся вместе!", t: "ИНТЕРАКТИВНОЕ МУЛЬТИМЕДИЙНОЕ ПРИЛОЖЕНИЕ ДЛЯ ИЗУЧЕНИЯ МАТЕМАТИКИ" },
+  id: {
+    n: "ID", g: "Selamat Datang di Numatik", s: "Numerasi Aktif melalui Teknologi Informasi dan Komunikasi",
+    y: "Tahun Ajaran {y}", b: "MULAI", h: "Selamat belajar!", t: "APLIKASI MULTIMEDIA PEMBELAJARAN MATEMATIKA INTERAKTIF",
+    languageNavLabel: "Pilih bahasa", languageButtonLabel: "Ganti bahasa ke {name}",
+    soundOnLabel: "Aktifkan suara", soundOffLabel: "Matikan suara",
+    closeLabel: "Tutup layar sambutan", replayLabel: "Ulangi animasi sambutan",
+  },
+  en: {
+    n: "EN", g: "Welcome to Numatik", s: "Active numeracy through information and communication technology",
+    y: "Academic Year {y}", b: "START", h: "Happy learning!", t: "INTERACTIVE MULTIMEDIA MATHEMATICS LEARNING APP",
+    languageNavLabel: "Choose language", languageButtonLabel: "Switch language to {name}",
+    soundOnLabel: "Turn sound on", soundOffLabel: "Turn sound off",
+    closeLabel: "Close welcome screen", replayLabel: "Replay welcome animation",
+  },
+  "ms-MY": {
+    n: "MS", g: "Selamat datang ke Numatik", s: "Numerasi aktif melalui teknologi maklumat dan komunikasi",
+    y: "Tahun Akademik {y}", b: "MULA", h: "Selamat belajar!", t: "APLIKASI MULTIMEDIA PEMBELAJARAN MATEMATIK INTERAKTIF",
+    languageNavLabel: "Pilih bahasa", languageButtonLabel: "Tukar bahasa kepada {name}",
+    soundOnLabel: "Hidupkan bunyi", soundOffLabel: "Matikan bunyi",
+    closeLabel: "Tutup skrin alu-aluan", replayLabel: "Ulang animasi alu-aluan",
+  },
+  ja: {
+    n: "日本語", g: "Numatikへようこそ", s: "情報通信技術を活用した主体的な数的思考力の育成",
+    y: "{y}年度", b: "スタート", h: "楽しく学びましょう！", t: "中学校数学のインタラクティブなマルチメディア学習アプリ",
+    languageNavLabel: "言語を選択", languageButtonLabel: "言語を{name}に切り替える",
+    soundOnLabel: "音声をオンにする", soundOffLabel: "音声をオフにする",
+    closeLabel: "ウェルカム画面を閉じる", replayLabel: "ウェルカムアニメーションを再生",
+  },
+  "zh-CN": {
+    n: "中文", g: "欢迎来到 Numatik", s: "借助信息与通信技术培养主动数学素养",
+    y: "{y}学年", b: "开始", h: "祝你学习愉快！", t: "初中数学互动多媒体学习应用",
+    languageNavLabel: "选择语言", languageButtonLabel: "切换为{name}",
+    soundOnLabel: "开启声音", soundOffLabel: "关闭声音",
+    closeLabel: "关闭欢迎页面", replayLabel: "重播欢迎动画",
+  },
+  ru: {
+    n: "RU", g: "Добро пожаловать в Numatik", s: "Развитие математической грамотности с помощью информационных технологий",
+    y: "{y} учебный год", b: "НАЧАТЬ", h: "Успехов в учёбе!", t: "ИНТЕРАКТИВНОЕ МУЛЬТИМЕДИЙНОЕ ПРИЛОЖЕНИЕ ДЛЯ ИЗУЧЕНИЯ МАТЕМАТИКИ",
+    languageNavLabel: "Выберите язык", languageButtonLabel: "Переключить язык на «{name}»",
+    soundOnLabel: "Включить звук", soundOffLabel: "Выключить звук",
+    closeLabel: "Закрыть приветственный экран", replayLabel: "Повторить приветственную анимацию",
+  },
+};
+
+const LANGUAGE_NAMES: Record<WelcomeLang, string> = {
+  id: "Bahasa Indonesia",
+  en: "English",
+  "ms-MY": "Bahasa Melayu (Malaysia)",
+  ja: "日本語",
+  "zh-CN": "简体中文",
+  ru: "Русский",
 };
 
 const store = {
@@ -37,9 +97,13 @@ const buzz = (p: number | number[]) => { try { navigator.vibrate?.(p); } catch {
 const S = (o: Record<string, string | number>) => o as CSSProperties;
 
 function detectLang(key: string): WelcomeLang {
-  const q = new URLSearchParams(window.location.search).get("lang");
-  const dev = (navigator.language || "id").slice(0, 2).toLowerCase();
-  return ([q, store.get(key), dev, "id"].find((k) => k && k in L) as WelcomeLang) || "id";
+  const normalize = (value: string | null) =>
+    normalizeLanguage(value) ??
+    normalizeLanguage(value?.split("-")[0].toLowerCase());
+  return normalize(new URLSearchParams(window.location.search).get("lang"))
+    ?? normalize(store.get(key))
+    ?? normalize(navigator.language)
+    ?? "id";
 }
 
 const SYMBOLS = ["π", "√", "∑", "∞", "△", "□", "∠", "÷", "×", "%", "≈", "x²", "∫", "θ"];
@@ -223,13 +287,27 @@ export default function NumatikWelcome({
       </div>
 
       <main className="app">
-        <nav className="langs" aria-label="Language">
+        <nav className="langs" aria-label={d.languageNavLabel}>
           {(Object.keys(L) as WelcomeLang[]).map((k) => (
-            <button key={k} aria-pressed={k === lang} onClick={() => setLang(k)}>{L[k].n}</button>
+            <button
+              key={k}
+              aria-label={d.languageButtonLabel.replace("{name}", LANGUAGE_NAMES[k])}
+              aria-pressed={k === lang}
+              onClick={() => setLang(k)}
+            >
+              {L[k].n}
+            </button>
           ))}
         </nav>
-        <button className="mute" aria-label="Sound" onClick={toggleMute}>{muted ? "🔇" : "🔊"}</button>
-        <button className="close" aria-label="Close" onClick={onClose}>✕</button>
+        <button
+          className="mute"
+          aria-label={muted ? d.soundOnLabel : d.soundOffLabel}
+          aria-pressed={!muted}
+          onClick={toggleMute}
+        >
+          {muted ? "🔇" : "🔊"}
+        </button>
+        <button className="close" aria-label={d.closeLabel} onClick={onClose}>✕</button>
 
         <section className="stage">
           <div className="copy">
@@ -255,7 +333,7 @@ export default function NumatikWelcome({
       {!onStart && (
         <div className={"arrive" + (arrived ? " show" : "")}>
           <p>{d.h}</p>
-          <button onClick={replay}>⟲</button>
+          <button aria-label={d.replayLabel} onClick={replay}>⟲</button>
         </div>
       )}
     </div>

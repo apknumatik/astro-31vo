@@ -1,23 +1,11 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import ExitDialog from "@/components/ExitDialog";
 import ThemePickerModal from "@/components/ThemePickerModal";
 import LanguagePickerModal from "@/components/LanguagePickerModal";
 import { playPopSound } from "@/hooks/useAudio";
 import { useLanguage, type Language } from "@/contexts/LanguageContext";
-import NumatikWelcome, { type WelcomeLang } from "./NumatikWelcome";
-
-const toWelcomeLang = (language: Language): WelcomeLang => {
-  if (language === "ms-MY") return "ms";
-  if (language === "zh-CN") return "zh";
-  return language;
-};
-
-const toAppLang = (language: WelcomeLang): Language => {
-  if (language === "ms") return "ms-MY";
-  if (language === "zh") return "zh-CN";
-  return language;
-};
+import NumatikWelcome from "./NumatikWelcome";
 
 const WelcomePage = () => {
   const { t } = useTranslation();
@@ -32,11 +20,6 @@ const WelcomePage = () => {
     setShowThemePicker(false);
     setShowLangPicker(true);
   }, []);
-
-  useEffect(() => {
-    if (new URLSearchParams(window.location.search).has("lang")) return;
-    if (language !== "id") setLanguage("id");
-  }, [language, setLanguage]);
 
   const handleStart = useCallback(() => {
     playPopSound();
@@ -59,11 +42,10 @@ const WelcomePage = () => {
     document.querySelector<HTMLButtonElement>("#btn-exit")?.click();
   }, []);
 
-  const handleLangChange = useCallback((nextLanguage: WelcomeLang) => {
-    const appLanguage = toAppLang(nextLanguage);
-    setLanguage(appLanguage);
+  const handleLangChange = useCallback((nextLanguage: Language) => {
+    setLanguage(nextLanguage);
     const url = new URL(window.location.href);
-    url.searchParams.set("lang", appLanguage);
+    url.searchParams.set("lang", nextLanguage);
     window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
   }, [setLanguage]);
 
@@ -75,7 +57,7 @@ const WelcomePage = () => {
         <NumatikWelcome
           onStart={handleStart}
           onClose={handleClose}
-          lang={toWelcomeLang(language)}
+          lang={language}
           onLangChange={handleLangChange}
           academicYear={academicYear}
           langStorageKey="numatik_language"

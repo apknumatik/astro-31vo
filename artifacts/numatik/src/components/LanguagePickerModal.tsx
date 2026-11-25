@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Settings } from "lucide-react";
+import { Settings, X } from "lucide-react";
 import * as THREE from "three";
 import { useTranslation } from "react-i18next";
 import { useLanguage, Language } from "@/contexts/LanguageContext";
@@ -567,6 +567,15 @@ const LanguagePickerModal = ({ open, onClose, instantEntrance = false }: Props) 
     }
   }, [open, language]);
 
+  useEffect(() => {
+    if (!open) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && !launching) onClose();
+    };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [launching, onClose, open]);
+
   const handleSelect = (id: Language) => {
     playPopSound();
     navigator.vibrate?.(10);
@@ -612,6 +621,9 @@ const LanguagePickerModal = ({ open, onClose, instantEntrance = false }: Props) 
           exit={{ opacity: 0 }}
           transition={{ duration: instantEntrance ? 0 : 0.28 }}
           className="language-picker-root fixed inset-0 z-[90] flex flex-col"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="language-picker-title"
         >
           {/* ── Top decorative area ── */}
           <div
@@ -730,24 +742,34 @@ const LanguagePickerModal = ({ open, onClose, instantEntrance = false }: Props) 
               <div className="language-picker-math-pattern" aria-hidden="true">
                 <span>1+1=2</span><span>A²+B²=C²</span><span>∠90°</span>
               </div>
-              <div className="picker-progress picker-progress-language" aria-label={`${t("selectLanguage")} 2 of 2`}>
+              <div className="picker-progress picker-progress-language" aria-label={t("languageStepProgress")}>
                 <div className="picker-progress-step"><span>01</span><b>{t("selectTheme")}</b></div>
                 <div className="picker-progress-line is-complete" />
                 <div className="picker-progress-step is-active"><span>02</span><b>{t("selectLanguage")}</b></div>
               </div>
               {/* Header */}
-              <div className="language-picker-heading flex items-center gap-2 mb-4">
+              <div className="language-picker-heading flex items-center justify-between gap-2 mb-4">
                 <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shrink-0">
                   <span className="text-sm">🌐</span>
                 </div>
-                <div>
+                <div className="flex-1">
                   <p className={`font-display text-[13px] font-black leading-tight ${s.headerTitle}`}>
-                    {t("selectLanguage")}
+                    <span id="language-picker-title">{t("selectLanguage")}</span>
                   </p>
                   <p className={`font-body text-xs ${s.headerSub}`}>
                     {t("languageSubtitle")}
                   </p>
                 </div>
+                <button
+                  type="button"
+                  aria-label={t("closeLanguagePicker")}
+                  title={t("closeLanguagePicker")}
+                  disabled={confirming}
+                  onClick={onClose}
+                  className={`menu-control-button menu-focusable flex h-10 w-10 items-center justify-center rounded-full disabled:opacity-50 ${s.headerTitle}`}
+                >
+                  <X aria-hidden="true" className="h-5 w-5" />
+                </button>
               </div>
 
               {/* Language cards */}
