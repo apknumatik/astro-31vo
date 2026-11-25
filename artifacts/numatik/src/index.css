@@ -2297,7 +2297,8 @@
   .menu-desktop-main {
     display: flex;
     min-width: 0;
-    flex: 1 1 auto;
+    width: 0;
+    flex: 1 1 0%;
     flex-direction: column;
     gap: 6px;
     padding: 10px 16px;
@@ -2343,9 +2344,16 @@
     gap: 12px;
   }
 
-  .menu-app-grid {
-    grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
+  .menu-desktop-layout:not(.is-sidebar-hidden) .menu-app-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 10px;
+  }
+
+  .menu-desktop-layout:not(.is-sidebar-hidden) .menu-app-card {
+    flex: 1 1 145px;
+    max-width: 168px;
   }
 
   .menu-app-title {
