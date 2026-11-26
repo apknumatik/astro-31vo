@@ -258,8 +258,6 @@ const BilanganBulatPage = () => {
     ? "gradient-space"
     : theme === "pastel"
     ? "bg-gradient-to-br from-purple-50 via-white to-pink-50"
-    : theme === "white"
-    ? "bg-white"
     : theme === "forest"
     ? "bg-gradient-to-br from-green-50 via-white to-emerald-50"
     : theme === "sunset"
@@ -272,14 +270,12 @@ const BilanganBulatPage = () => {
     : theme === "pastel" ? "#6d28d9"
     : theme === "forest"  ? "#16a34a"
     : theme === "sunset"  ? "#c2410c"
-    : theme === "white"   ? "#4f46e5"
     : "#0369a1"; // ocean / blue
   const headerBorder = isDark
     ? "rgba(99,102,241,0.3)"
     : theme === "pastel" ? "rgba(109,40,217,0.58)"
     : theme === "forest"  ? "rgba(22,163,74,0.6)"
     : theme === "sunset"  ? "rgba(194,65,12,0.6)"
-    : theme === "white"   ? "rgba(79,70,229,0.5)"
     : "rgba(3,105,161,0.6)";
 
   // ── pembahasan cards ────────────────────────────────────────────────

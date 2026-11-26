@@ -429,7 +429,6 @@ const Starfield = ({ matchWelcome = false }: { matchWelcome?: boolean }) => {
   switch (theme) {
     case "dark":    return matchWelcome ? <WelcomeStyleStarCanvas /> : <StarCanvas />;
     case "light":   return <SnowCanvas />;
-    case "white":   return <WhiteCanvas />;
     case "pastel":  return <WhiteCanvas />;
     case "forest":  return <ForestCanvas />;
     case "ocean":   return <OceanCanvas />;

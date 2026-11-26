@@ -63,7 +63,7 @@ const allTopics: Topic[] = [
 const TKAModulPemantapanPage = () => {
   const navigate = useNavigate();
   const { theme } = useTheme();
-  const isWhite = theme === "white" || theme === "pastel";
+  const isWhite = theme === "pastel";
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
   const handleClick = (name: string) => {

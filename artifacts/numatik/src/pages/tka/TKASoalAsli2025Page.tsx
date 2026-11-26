@@ -51,8 +51,6 @@ const TKASoalAsli2025Page = () => {
     ? "gradient-space"
     : theme === "pastel"
     ? "bg-gradient-to-br from-purple-50 via-white to-pink-50"
-    : theme === "white"
-    ? "bg-white"
     : theme === "forest"
     ? "bg-gradient-to-br from-green-50 via-white to-emerald-50"
     : theme === "sunset"

@@ -1,21 +1,16 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Settings, X, Gamepad2, BookOpen, ClipboardCheck,
-  Medal, Bot, Calculator, Zap, FileText, GraduationCap,
-  ArrowLeftRight, Sigma, Brain, PlayCircle, FileQuestion,
-  Rocket, User, Heart, Info,
-} from "lucide-react";
+import { Settings, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useTheme, Theme } from "@/contexts/ThemeContext";
+import { MENU_ITEMS, MENU_SECTIONS } from "@/data/menuConfig";
 import { playPopSound } from "@/hooks/useAudio";
 
 /* ── Theme definitions ─────────────────────────────────────── */
 type ThemeDef = {
   id: Theme;
   emoji: string;
-  name: string;
   swatch: string;
   ring: string;
   dot: string;
@@ -23,46 +18,40 @@ type ThemeDef = {
 
 const THEMES: ThemeDef[] = [
   {
-    id: "dark",   emoji: "🌌", name: "Luar Angkasa",
+    id: "dark",   emoji: "🌌",
     swatch: "linear-gradient(135deg,#0f172a,#1e1b4b,#0e2240)",
     ring: "ring-violet-500 shadow-[0_0_14px_rgba(139,92,246,0.6)]", dot: "bg-violet-400",
   },
   {
-    id: "sunset", emoji: "☁️", name: "Langit Cerah",
+    id: "sunset", emoji: "☁️",
     swatch: "linear-gradient(135deg,#38bdf8,#7dd3fc,#bae6fd,#e0f2fe)",
     ring: "ring-sky-400 shadow-[0_0_14px_rgba(14,165,233,0.5)]", dot: "bg-sky-400",
   },
   {
-    id: "pastel", emoji: "🎨", name: "Pastel",
+    id: "pastel", emoji: "🎨",
     swatch: "linear-gradient(135deg,#fff1ad,#d5c9ff,#ffbdd9,#bfeeff)",
     ring: "ring-violet-500 shadow-[0_0_14px_rgba(103,88,212,0.4)]", dot: "bg-violet-500",
   },
   {
-    id: "ocean",  emoji: "🌊", name: "Lautan Biru",
+    id: "ocean",  emoji: "🌊",
     swatch: "linear-gradient(135deg,#0c2a4a,#075985,#0369a1)",
     ring: "ring-cyan-500 shadow-[0_0_14px_rgba(6,182,212,0.5)]", dot: "bg-cyan-400",
   },
   {
-    id: "light",  emoji: "❄️", name: "Salju Cerah",
+    id: "light",  emoji: "❄️",
     swatch: "linear-gradient(135deg,#e0f2fe,#f0f9ff,#ffffff)",
     ring: "ring-blue-500 shadow-[0_0_14px_rgba(59,130,246,0.4)]", dot: "bg-blue-500",
   },
   {
-    id: "forest", emoji: "🌿", name: "Hutan Hijau",
+    id: "forest", emoji: "🌿",
     swatch: "linear-gradient(135deg,#bbf7d0,#dcfce7,#f0fdf4)",
     ring: "ring-green-500 shadow-[0_0_14px_rgba(34,197,94,0.45)]", dot: "bg-green-500",
-  },
-  {
-    id: "white",  emoji: "🤍", name: "Putih Bersih",
-    swatch: "linear-gradient(135deg,#ffffff,#f8fafc,#f1f5f9)",
-    ring: "ring-slate-400 shadow-[0_0_14px_rgba(148,163,184,0.5)]", dot: "bg-slate-400",
   },
 ];
 
 /* ── Per-theme visual tokens for the full-screen preview ─────── */
 const PREVIEW_BG: Record<Theme, string> = {
   dark:   "linear-gradient(160deg,#0f172a 0%,#1e1b4b 50%,#0e2240 100%)",
-  white:  "linear-gradient(160deg,#ffffff 0%,#fafbfc 50%,#f5f7fa 100%)",
   ocean:  "linear-gradient(160deg,#061f3a 0%,#0c2a4a 40%,#075985 100%)",
   light:  "linear-gradient(160deg,#bfdbfe 0%,#dbeafe 35%,#e0f2fe 65%,#f0f9ff 100%)",
   forest: "linear-gradient(160deg,#bbf7d0 0%,#d1fae5 35%,#dcfce7 70%,#f0fdf4 100%)",
@@ -70,10 +59,18 @@ const PREVIEW_BG: Record<Theme, string> = {
   pastel: "linear-gradient(160deg,#fff4bd 0%,#f7eaff 42%,#eaf8ff 78%,#eafbea 100%)",
 };
 
+const THEME_CARD_SURFACE: Record<Theme, string> = {
+  dark: "linear-gradient(135deg,#28274c,#151b35)",
+  ocean: "linear-gradient(135deg,#0b5570,#0a2b4a)",
+  light: "linear-gradient(135deg,#dbeafe,#bfdbfe)",
+  forest: "linear-gradient(135deg,#dcfce7,#bbf7d0)",
+  sunset: "linear-gradient(135deg,#bae6fd,#7dd3fc)",
+  pastel: "linear-gradient(135deg,#f7eaff,#eaf8ff)",
+};
+
 type CardTokens = { bg: string; border: string; text: string; sub: string; icon: string };
 const CARD: Record<Theme, CardTokens> = {
   dark:   { bg:"rgba(255,255,255,0.07)", border:"rgba(255,255,255,0.13)", text:"#e2e8f0", sub:"rgba(147,197,253,0.65)", icon:"#38bdf8" },
-  white:  { bg:"rgba(255,255,255,0.82)", border:"rgba(67,56,202,0.2)", text:"#111827", sub:"#374151", icon:"#4338ca" },
   ocean:  { bg:"rgba(255,255,255,0.08)", border:"rgba(6,182,212,0.28)", text:"#cffafe", sub:"rgba(103,232,249,0.65)", icon:"#22d3ee" },
   light:  { bg:"rgba(255,255,255,0.78)", border:"rgba(59,130,246,0.22)", text:"#1e3a8a", sub:"#3b82f6", icon:"#2563eb" },
   forest: { bg:"rgba(255,255,255,0.68)", border:"rgba(34,197,94,0.28)", text:"#14532d", sub:"#16a34a", icon:"#15803d" },
@@ -82,99 +79,73 @@ const CARD: Record<Theme, CardTokens> = {
 };
 
 const TITLE_COLOR: Record<Theme, string> = {
-  dark:"#facc15", white:"#2196f3", ocean:"#67e8f9",
+  dark:"#facc15", ocean:"#67e8f9",
   light:"#1d4ed8", forest:"#166534", sunset:"#0369a1", pastel:"#5144b8",
 };
 
-const SUBTITLE_COLOR: Record<Theme, string> = {
-  dark:"rgba(147,197,253,0.7)", white:"rgba(33,150,243,0.7)", ocean:"rgba(103,232,249,0.65)",
-  light:"rgba(59,130,246,0.8)", forest:"rgba(22,163,74,0.8)", sunset:"rgba(3,105,161,0.7)", pastel:"#535d75",
+const PANEL_BG: Record<Theme, string> = {
+  dark: "linear-gradient(180deg,#0e1326,#0a0f1e)",
+  ocean: "linear-gradient(180deg,#0d3a5c,#0a2540)",
+  light: "linear-gradient(180deg,#eff6ff,#dbeafe)",
+  forest: "linear-gradient(180deg,#f0fdf4,#dcfce7)",
+  sunset: "linear-gradient(180deg,#f0f9ff,#e0f2fe)",
+  pastel: "linear-gradient(180deg,#fffdf8,#f3efff)",
 };
-
-/* ── Menu items to show in preview ──────────────────────────── */
-const PREVIEW_ITEMS = [
-  { icon: GraduationCap, menuKey: "menu.teacherRoom" },
-  { icon: BookOpen,      menuKey: "menu.animatedBook" },
-  { icon: Gamepad2,      menuKey: "menu.gameArena" },
-  { icon: Bot,           menuKey: "menu.ai" },
-  { icon: ClipboardCheck,menuKey: "menu.lkpd" },
-  { icon: Medal,         menuKey: "menu.olympiad" },
-  { icon: Calculator,    menuKey: "menu.calculator" },
-  { icon: Zap,           menuKey: "menu.fastCalc" },
-  { icon: Brain,         menuKey: "menu.academic" },
-  { icon: ArrowLeftRight,menuKey: "menu.conversion" },
-  { icon: Sigma,         menuKey: "menu.formula" },
-  { icon: PlayCircle,    menuKey: "menu.video" },
-  { icon: FileText,      menuKey: "menu.questionBank" },
-  { icon: FileQuestion,  menuKey: "menu.practice" },
-  { icon: Rocket,        menuKey: "menu.about" },
-  { icon: User,          menuKey: "menu.biography" },
-  { icon: Heart,         menuKey: "menu.donate" },
-  { icon: Info,          menuKey: "menu.guide" },
-];
 
 /* ── Full-screen menu preview ────────────────────────────────── */
 const FullMenuPreview = ({ theme }: { theme: Theme }) => {
   const c = CARD[theme];
   const { t } = useTranslation();
+  const featuredItems = MENU_ITEMS.filter((item) => item.featured);
   return (
-    <div className="absolute inset-0 overflow-hidden" style={{ background: PREVIEW_BG[theme] }}>
-      {/* Star pattern overlay for dark/ocean */}
-      {(theme === "dark" || theme === "ocean") && (
-        <div className="absolute inset-0 pointer-events-none" style={{
-          backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.22) 1px, transparent 1px)",
-          backgroundSize: "28px 28px",
-          opacity: 0.4,
-        }} />
-      )}
+    <div className="absolute inset-0 overflow-hidden" aria-hidden="true" style={{ background: PREVIEW_BG[theme] }}>
+      <div className={`theme-preview-stars theme-preview-stars-${theme}`} aria-hidden="true" />
+      <div className="theme-menu-screen">
+        <header className="theme-menu-header">
+          <div className="theme-menu-brand">
+            <span className="theme-menu-brand-mark" style={{ color: TITLE_COLOR[theme] }}>π</span>
+            <div>
+              <strong>NUMATIK</strong>
+              <span>{t("menu.title")}</span>
+            </div>
+          </div>
+          <div className="theme-menu-search" style={{ borderColor: c.border, color: c.sub }}>
+            {t("menu.searchPlaceholder")}
+          </div>
+        </header>
 
-      {/* Leaf/nature pattern for forest */}
-      {theme === "forest" && (
-        <div className="absolute inset-0 pointer-events-none" style={{
-          backgroundImage: "radial-gradient(circle, rgba(34,197,94,0.15) 2px, transparent 2px)",
-          backgroundSize: "32px 32px",
-          opacity: 0.6,
-        }} />
-      )}
-
-      {/* Content */}
-      <div className="relative z-10 flex flex-col items-center pt-6 px-5 pb-2">
-        {/* Nav bar mock */}
-        <div className="w-full flex justify-between items-center mb-5 opacity-50">
-          <div className="h-3 w-12 rounded-full" style={{ background: TITLE_COLOR[theme], opacity: 0.4 }} />
-          <div className="h-3 w-16 rounded-full" style={{ background: TITLE_COLOR[theme], opacity: 0.4 }} />
+        <div className="theme-menu-featured">
+          {featuredItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <div key={item.key} className="theme-menu-featured-card" style={{ background: c.bg, borderColor: c.border }}>
+                <Icon aria-hidden="true" style={{ color: c.icon }} />
+                <span style={{ color: c.text }}>{t(`menu.${item.key}`)}</span>
+                <small style={{ color: c.sub }}>{t(`menuItems.${item.key}.desc`)}</small>
+              </div>
+            );
+          })}
         </div>
 
-        {/* Title */}
-        <h1
-          className="font-display font-black text-2xl tracking-widest mb-1"
-          style={{ color: TITLE_COLOR[theme] }}
-        >
-          {t("menu.title")}
-        </h1>
-        <p className="font-body text-xs mb-5" style={{ color: SUBTITLE_COLOR[theme] }}>
-          {t("menu.subtitle")}
-        </p>
-
-        {/* Grid */}
-        <div className="grid grid-cols-3 gap-2.5 w-full max-w-xs">
-          {PREVIEW_ITEMS.map(({ icon: Icon, menuKey }) => (
-            <div
-              key={menuKey}
-              className="rounded-xl flex flex-col items-center gap-1.5 py-3 px-2"
-              style={{
-                background: c.bg,
-                border: `1px solid ${c.border}`,
-              }}
-            >
-              <Icon style={{ color: c.icon, width: 18, height: 18 }} />
-              <span
-                className="font-display font-bold text-center leading-tight"
-                style={{ color: c.text, fontSize: "9px" }}
-              >
-                {t(menuKey)}
-              </span>
-            </div>
+        <div className="theme-menu-sections">
+          {MENU_SECTIONS.map((section) => (
+            <section key={section.group} className="theme-menu-section">
+              <h2 style={{ color: TITLE_COLOR[theme] }}>{t(section.labelKey)}</h2>
+              <div>
+                {MENU_ITEMS
+                  .filter((item) => item.group === section.group && !item.featured)
+                  .slice(0, 2)
+                  .map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <div key={item.key} className="theme-menu-item" style={{ background: c.bg, borderColor: c.border }}>
+                        <Icon aria-hidden="true" style={{ color: c.icon }} />
+                        <span style={{ color: c.text }}>{t(`menuItems.${item.key}.label`)}</span>
+                      </div>
+                    );
+                  })}
+              </div>
+            </section>
           ))}
         </div>
       </div>
@@ -195,22 +166,48 @@ const ThemePickerModal = ({ open, onClose, onContinue }: Props) => {
   const { t } = useTranslation();
   const [selected, setSelected] = useState<Theme>(theme);
   const [confirming, setConfirming] = useState(false);
-
-  const handleSelect = (id: Theme) => {
+  const handleSelect = useCallback((id: Theme) => {
     playPopSound();
+    navigator.vibrate?.(10);
     setSelected(id);
     setTheme(id);
-  };
+  }, [setTheme]);
+
+  useEffect(() => {
+    if (open) {
+      setSelected(theme);
+      setConfirming(false);
+    }
+  }, [open, theme]);
+
+  useEffect(() => {
+    if (!open) return;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        onClose();
+        return;
+      }
+      if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+      event.preventDefault();
+      const currentIndex = THEMES.findIndex((item) => item.id === selected);
+      const direction = event.key === "ArrowRight" ? 1 : -1;
+      handleSelect(THEMES[(currentIndex + direction + THEMES.length) % THEMES.length].id);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [handleSelect, onClose, open, selected]);
 
   const handleContinue = () => {
     playPopSound();
+    if (onContinue) {
+      onContinue();
+      return;
+    }
+
     setConfirming(true);
     setTimeout(() => {
-      if (onContinue) {
-        onContinue();
-      } else {
-        navigate("/menu");
-      }
+      navigate("/menu");
     }, 350);
   };
 
@@ -235,17 +232,13 @@ const ThemePickerModal = ({ open, onClose, onContinue }: Props) => {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.28 }}
           className="theme-picker-root fixed inset-0 z-[80] flex flex-col"
+          data-theme={selected}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="theme-picker-title"
         >
           {/* ── Full-screen preview (fills all space above the panel) ── */}
           <div className="theme-picker-preview relative flex-1 min-h-0 overflow-hidden">
-            <div className="theme-math-decor" aria-hidden="true">
-              <span className="theme-math-grid-symbol symbol-pi">π</span>
-              <span className="theme-math-grid-symbol symbol-sigma">Σ</span>
-              <span className="theme-math-grid-symbol symbol-square">x²</span>
-              <span className="theme-math-grid-symbol symbol-angle">∠</span>
-              <span className="theme-math-axis axis-x" />
-              <span className="theme-math-axis axis-y" />
-            </div>
             <AnimatePresence mode="wait">
               <motion.div
                 key={selected}
@@ -261,8 +254,8 @@ const ThemePickerModal = ({ open, onClose, onContinue }: Props) => {
 
             {/* Preview label */}
             <div className="absolute top-4 left-4 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/30 backdrop-blur-sm border border-white/15">
-              <span className="text-[10px] font-body text-white/60 font-semibold uppercase tracking-widest">
-                {t("previewMenu")}
+              <span className="text-xs font-body text-white font-black uppercase tracking-widest">
+                {t("themePreview")}
               </span>
             </div>
 
@@ -274,7 +267,7 @@ const ThemePickerModal = ({ open, onClose, onContinue }: Props) => {
               className="absolute top-4 right-4 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/30 backdrop-blur-sm border border-white/15"
             >
               <span className="text-sm">{activeDef.emoji}</span>
-              <span className="font-display text-[11px] font-bold text-white/85">
+              <span className="font-display text-xs font-bold text-white/85">
                 {t(`themeNames.${activeDef.id}`)}
               </span>
             </motion.div>
@@ -289,7 +282,8 @@ const ThemePickerModal = ({ open, onClose, onContinue }: Props) => {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 80, opacity: 0 }}
             transition={{ type: "spring", stiffness: 300, damping: 28, delay: 0.1 }}
-            className="theme-picker-panel relative z-20 bg-gradient-to-b from-[#0e1326] to-[#0a0f1e] border-t border-white/10 shadow-2xl shadow-black/60"
+            className="theme-picker-panel relative z-20 border-t shadow-2xl shadow-black/30"
+            style={{ background: PANEL_BG[selected], borderColor: CARD[selected].border }}
           >
             {/* Drag handle */}
             <div className="theme-picker-drag-handle flex justify-center pt-2.5 pb-1">
@@ -300,7 +294,7 @@ const ThemePickerModal = ({ open, onClose, onContinue }: Props) => {
               <div className="theme-picker-math-pattern" aria-hidden="true">
                 <span>π</span><span>Σ</span><span>△</span><span>√</span><span>∞</span>
               </div>
-              <div className="picker-progress" aria-label="Theme 1 of 2">
+              <div className="picker-progress" aria-label={t("themeStepProgress")}>
                 <div className="picker-progress-step is-active"><span>01</span><b>{t("selectTheme")}</b></div>
                 <div className="picker-progress-line" />
                 <div className="picker-progress-step"><span>02</span><b>{t("selectLanguage")}</b></div>
@@ -314,52 +308,66 @@ const ThemePickerModal = ({ open, onClose, onContinue }: Props) => {
                   </div>
                   <div>
                     <p className="font-display text-[13px] font-black text-white leading-tight">
-                      {t("selectTheme")}
+                      <span id="theme-picker-title">{t("selectTheme")}</span>
                     </p>
-                    <p className="font-body text-[10px] text-white/40">
+                    <p className="font-body text-xs text-white/40">
                       {t("themeSubtitle")}
                     </p>
                   </div>
                 </div>
                 <button
+                  type="button"
                   onClick={handleSkip}
-                  className="w-7 h-7 rounded-full bg-white/8 hover:bg-white/18 transition flex items-center justify-center cursor-pointer"
+                  aria-label={t("closeThemePicker")}
+                  title={t("closeThemePicker")}
+                  className="w-11 h-11 rounded-full bg-white/8 hover:bg-white/18 transition flex items-center justify-center cursor-pointer"
                 >
-                  <X className="w-3.5 h-3.5 text-white/50" />
+                  <X className="w-5 h-5 text-white/50" />
                 </button>
               </div>
 
-              {/* Theme selector strip */}
-              <div className="theme-button-grid grid grid-cols-7 gap-2 mb-4">
+              {/* Theme selection cards */}
+              <div
+                className="theme-card-rail mb-4"
+                role="group"
+                aria-label={t("selectTheme")}
+              >
                 {THEMES.map((thm) => {
                   const isActive = selected === thm.id;
                   return (
-                    <button
+                    <motion.button
                       key={thm.id}
+                      type="button"
                       onClick={() => handleSelect(thm.id)}
                       title={t(`themeNames.${thm.id}`)}
-                      className={`future-theme-option relative rounded-xl flex flex-col items-center gap-1 py-2 px-1 border-2 transition-all duration-200 cursor-pointer ${
+                      aria-pressed={isActive}
+                      className={`future-theme-option future-language-option theme-choice-card relative rounded-2xl flex flex-row items-center justify-start gap-3 px-3 py-2 border-2 transition-colors duration-200 cursor-pointer text-left ${
                         isActive
                           ? `border-transparent ring-2 ${thm.ring}`
-                          : "border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/25 ring-0"
+                          : "ring-0 border-white/15"
                       }`}
+                      animate={{ scale: isActive ? 1 : 0.96, y: isActive ? -3 : 0 }}
+                      transition={{ type: "spring", stiffness: 320, damping: 26 }}
+                      style={{
+                        background: isActive ? thm.swatch : THEME_CARD_SURFACE[thm.id],
+                        borderColor: isActive ? "transparent" : CARD[thm.id].border,
+                      }}
                     >
-                      <div
-                        className="w-full h-7 rounded-lg border border-black/10"
-                        style={{ background: thm.swatch }}
-                      />
-                      <span className="future-theme-emoji text-[14px] leading-none">{thm.emoji}</span>
-                      <span className="future-theme-name">
-                        {t(`themeNames.${thm.id}`)}
+                      <span className="theme-choice-swatch" style={{ background: thm.swatch }}>
+                        {thm.emoji}
                       </span>
-
+                      <span className="min-w-0 flex-1">
+                        <span className="future-theme-name" style={{ color: TITLE_COLOR[thm.id] }}>
+                          {t(`themeNames.${thm.id}`)}
+                        </span>
+                      </span>
                       {isActive && (
                         <motion.div
                           layoutId="active-theme-dot"
-                          className={`absolute top-1.5 right-1.5 w-2 h-2 rounded-full ${thm.dot}`}
+                          className={`absolute top-2 right-2 w-2.5 h-2.5 rounded-full ${thm.dot}`}
                         />
                       )}
-                    </button>
+                    </motion.button>
                   );
                 })}
               </div>
@@ -377,7 +385,7 @@ const ThemePickerModal = ({ open, onClose, onContinue }: Props) => {
               {/* Info note */}
               <div className="flex items-center gap-2 mt-2.5">
                 <Settings className="w-3 h-3 text-white/30 flex-shrink-0" />
-                <p className="font-body text-[10px] text-white/35 leading-snug">
+                <p className="font-body text-xs text-white/50 leading-snug">
                   {t("changeThemeHint")}{" "}
                   <span className="text-white/55 font-semibold">{t("settingsTheme")}</span>
                 </p>

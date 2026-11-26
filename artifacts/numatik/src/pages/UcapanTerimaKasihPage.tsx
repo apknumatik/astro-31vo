@@ -11,7 +11,7 @@ const AcknowledgementsPage = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { theme } = useTheme();
-  const isWhite = theme === "white" || theme === "pastel";
+  const isWhite = theme === "pastel";
 
   useEffect(() => {
     window.scrollTo(0, 0);

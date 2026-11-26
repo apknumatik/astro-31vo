@@ -37,17 +37,6 @@ const CANVAS_THEME: Record<Theme, CanvasTheme> = {
     cursorBg: "rgba(15,23,42,0.85)",
     cursorText: "#22d3ee",
   },
-  white: {
-    bg: "#ffffff",
-    gridMinor: "rgba(100,116,139,0.15)",
-    gridMajor: "rgba(71,85,105,0.55)",
-    arrow: "rgba(71,85,105,0.75)",
-    label: "rgba(71,85,105,0.8)",
-    labelStrong: "rgba(51,65,85,0.9)",
-    cursorLine: "rgba(71,85,105,0.25)",
-    cursorBg: "rgba(255,255,255,0.92)",
-    cursorText: "#0284c7",
-  },
   light: {
     bg: "#eff6ff",
     gridMinor: "rgba(59,130,246,0.14)",

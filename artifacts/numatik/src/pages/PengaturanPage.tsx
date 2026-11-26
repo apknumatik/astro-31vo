@@ -93,17 +93,6 @@ const THEME_DEFS: ThemeDef[] = [
     activeDot: "bg-violet-500",
     ready: true,
   },
-  {
-    id: "white",
-    emoji: "🤍",
-    name: "Putih Bersih",
-    desc: "Minimalis & polos 🕊️",
-    gradient: "linear-gradient(135deg,#ffffff,#f8fafc,#f1f5f9)",
-    activeBorder: "border-slate-400",
-    activeShadow: "shadow-[0_0_16px_rgba(148,163,184,0.5)]",
-    activeDot: "bg-slate-400",
-    ready: true,
-  },
 ];
 
 type LangOption = {
@@ -163,7 +152,6 @@ function getThemeGradient(t: Theme): string {
   const map: Record<Theme, string> = {
     dark:   "gradient-space",
     light:  "gradient-snow",
-    white:  "gradient-white",
     forest: "gradient-forest",
     ocean:  "gradient-ocean",
     sunset: "gradient-sunset",
