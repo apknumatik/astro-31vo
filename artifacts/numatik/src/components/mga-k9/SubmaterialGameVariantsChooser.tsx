@@ -324,14 +324,13 @@ const SubmaterialGameVariantsChooserK9 = () => {
 
                 <div className="relative flex-shrink-0 flex items-center pr-4">
                   <div
-                    className={`flex items-center gap-1.5 px-4 py-2 rounded-xl font-black text-[11px] transition-all duration-300 group-hover:scale-105 ${isLight ? "text-slate-900 border border-slate-300/80" : "text-white"}`}
+                    className={`flex items-center gap-1.5 px-4 py-2 rounded-xl font-black text-[11px] text-white transition-all duration-300 group-hover:scale-105 ${isLight ? "border border-white/70" : ""}`}
                     style={{
-                      background: isLight ? `linear-gradient(135deg, ${v.from}22, ${v.to}22)` : `linear-gradient(135deg, ${v.from}, ${v.to})`,
-                      boxShadow: `0 2px 12px ${isLight ? "rgba(15,23,42,0.12)" : v.glow}`,
-                      borderColor: isLight ? `${v.from}66` : undefined,
+                      background: `linear-gradient(135deg, ${v.from}, ${v.to})`,
+                      boxShadow: isLight ? "0 4px 14px rgba(37,99,235,0.28)" : `0 2px 12px ${v.glow}`,
                     }}
                   >
-                    <Play className={`w-3 h-3 ${isLight ? "fill-slate-900" : "fill-white"}`} />
+                    <Play className="w-3 h-3 fill-white" />
                     <span>MAIN!</span>
                   </div>
                 </div>
